@@ -176,9 +176,9 @@ function ProgressScreen({ state, setState, onNav }) {
             <Icon.Sparkles size={18} />
           </span>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: 13, fontWeight: 700 }}>Pattern Detected</div>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>Ask AI Coach</div>
             <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 4, lineHeight: 1.5 }}>
-              You miss Wed + Fri (shoot days). Try pre-logging meals the night before.
+              <span style={{ fontWeight: 600, color: "var(--purple)" }}>Pattern Detected:</span> You miss serves on shoot days. Tap to get a personalised pre-log plan.
             </div>
           </div>
           <Icon.ChevronRight size={14} stroke="var(--text-2)" />
