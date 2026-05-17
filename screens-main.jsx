@@ -38,6 +38,24 @@ function HomeScreen({ state, setState, onNav }) {
           </div>
         </div>
 
+        {/* 8 PM Streak Warning Banner */}
+        {count < target && streak > 0 && (
+          <div className="card-row outline-orange anim-up"
+            style={{ marginTop: 24, cursor: "pointer", background: "rgba(232,98,10,0.1)", border: "1px solid var(--orange)" }}
+            onClick={() => onNav("coach", { context: "streak-warning" })}>
+            <div style={{
+              width: 36, height: 36, borderRadius: 10, background: "var(--orange)", display: "grid", placeItems: "center", color: "#fff"
+            }}>
+              <Icon.Flame size={20}/>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 800, fontSize: 14, color: "var(--orange)" }}>Your {streak}-day streak is at risk</div>
+              <div style={{ fontSize: 12, color: "var(--text-2)", marginTop: 2 }}>You are {target - count} serve{target - count > 1 ? "s" : ""} short.</div>
+            </div>
+            <Icon.ChevronRight size={18} stroke="var(--orange)"/>
+          </div>
+        )}
+
         {/* Hero card */}
         <div onClick={() => onNav("log")} style={{
           marginTop: 28, borderRadius: 24, background: "var(--green)",

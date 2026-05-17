@@ -117,7 +117,7 @@ function App() {
       {r === "progress" && <FlowScreens.ProgressScreen state={appState} setState={setAppState} onNav={navigate}/>}
       {r === "calendar" && <FlowScreens.CalendarScreen state={appState} onNav={navigate}/>}
       {r === "camera" && <FlowScreens.CameraScreen state={appState} setState={setAppState} onNav={navigate} showToast={showToast}/>}
-      {r === "coach" && <FlowScreens.CoachScreen state={appState} onNav={navigate} showToast={showToast}/>}
+      {r === "coach" && <FlowScreens.CoachScreen state={appState} onNav={navigate} showToast={showToast} context={p.context}/>}
 
       {r === "learn" && <LearnScreens.LearnScreen onNav={navigate} learnState={learnState}/>}
       {r === "learn-detail" && <LearnScreens.LearnDetailScreen topicId={p.topic} onNav={navigate} learnState={learnState} setLearnState={setLearnState}/>}

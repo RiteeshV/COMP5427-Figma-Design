@@ -451,11 +451,19 @@ function CameraScreen({ state, setState, onNav, showToast }) {
 }
 
 // ───── AI Coach ─────
-function CoachScreen({ state, onNav, showToast }) {
-  const [messages, setMessages] = useStateP([
-    { role: "ai", text: "Hey Muthu! You're at " + state.count + "/" + state.target + " serves. Great salad at lunch 🥗" },
-    { role: "ai", text: "You shoot Wednesdays — your hardest day. Want a pre-log plan?" },
-  ]);
+function CoachScreen({ state, onNav, showToast, context }) {
+  const isStreakWarning = context === "streak-warning";
+  const initialMessages = isStreakWarning
+    ? [
+        { role: "ai", text: "Hey Muthu, I noticed your " + state.streak + "-day streak is at risk tonight! You shoot Wednesdays — your hardest day." },
+        { role: "ai", text: "Want a pre-log plan to save your streak before midnight?" }
+      ]
+    : [
+        { role: "ai", text: "Hey Muthu! You're at " + state.count + "/" + state.target + " serves. Great salad at lunch 🥗" },
+        { role: "ai", text: "You shoot Wednesdays — your hardest day. Want a pre-log plan?" },
+      ];
+
+  const [messages, setMessages] = useStateP(initialMessages);
   const [input, setInput] = useStateP("");
   const [thinking, setThinking] = useStateP(false);
   const scrollRef = useRefP(null);
@@ -471,6 +479,24 @@ function CoachScreen({ state, onNav, showToast }) {
     setMessages(next);
     setInput("");
     setThinking(true);
+
+    if (isStreakWarning) {
+      setTimeout(() => {
+        let reply = "";
+        if (text.toLowerCase().includes("plan")) {
+          reply = "Here's your plan for tomorrow's shoot:\n• 7am: Spinach smoothie (1 serve)\n• 12pm: Salad bar (2 serves)\n• 3pm: Apple + almonds (1 serve)\n• 7pm: Light dinner with broccoli (1 serve)\n\nShall I set a 7:00 AM reminder?";
+        } else if (text.toLowerCase().includes("reminder") || text.toLowerCase().includes("yes")) {
+          reply = "Done! I've set a reminder for 7:00 AM tomorrow. Tomorrow — Shoot Day 🎬. You've got this!";
+          showToast("7:00 AM Reminder Set");
+        } else {
+          reply = "You can still save your streak tonight! Grab a quick carrot or some cherry tomatoes.";
+        }
+        setMessages(m => [...m, { role: "ai", text: reply }]);
+        setThinking(false);
+      }, 1500);
+      return;
+    }
+
     try {
       const systemContext = `You are VeggieTrack AI Coach — a friendly, concise nutrition assistant inside a vegetable-serve tracking app. The user (Muthu) is a film crew member who tracks vegetable serves daily. Today: ${state.count}/${state.target} serves logged, ${state.streak}-day streak. Keep replies under 60 words, warm, practical, action-oriented. Use one emoji max. Suggest concrete foods or habits.`;
       const reply = await window.claude.complete({
