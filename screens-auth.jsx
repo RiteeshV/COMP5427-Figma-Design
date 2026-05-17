@@ -327,30 +327,126 @@ function CreateAccountScreen({ onNav, showToast }) {
     </div>
   );
 }
-// ───── Mock iOS Home Screen ─────
+// ───── Mock iOS Home Screen (iOS 26 Aesthetic) ─────
 function IOSHomeScreen({ onNav }) {
+  // iOS 26 style: Deep, vibrant, immersive depth wallpaper
   const wallpaper = "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') center/cover";
   
-  // Create a 4x4 grid of mock apps
   const apps = [
-    { name: "Mail", bg: "#0A84FF", icon: <Icon.Mail/> },
-    { name: "Calendar", bg: "#fff", icon: <div style={{color: "#FF3B30", fontWeight: 700, fontSize: 18, lineHeight:1, marginTop:2}}>17</div> },
-    { name: "Photos", bg: "#fff", icon: <div style={{color: "#34C759", fontSize:24}}>❋</div> },
-    { name: "Camera", bg: "#8E8E93", icon: <Icon.Camera/> },
-    
-    { name: "Weather", bg: "#5AC8FA", icon: <Icon.Sun/> },
-    { name: "Clock", bg: "#000", icon: <Icon.Refresh/> },
-    { name: "Maps", bg: "#34C759", icon: <Icon.ArrowRight/> },
-    { name: "Notes", bg: "#FFD60A", icon: <Icon.Pencil/> },
-    
-    { name: "Reminders", bg: "#fff", icon: <Icon.Check color="#FF3B30"/> },
-    { name: "Settings", bg: "#8E8E93", icon: <Icon.Settings/> },
-    { name: "VeggieTrack", bg: "#3DDC84", icon: <Icon.Logo size={32} fill="#0F1D15"/>, isTarget: true },
+    { 
+      name: "Mail", 
+      bg: "linear-gradient(180deg, #4AA1FF 0%, #0055FF 100%)", 
+      icon: <Icon.Mail size={32} stroke="#fff" strokeWidth={1.5}/> 
+    },
+    { 
+      name: "Calendar", 
+      bg: "#fff", 
+      content: (
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", width: "100%", height: "100%" }}>
+          <div style={{ color: "#FF3B30", fontSize: 10, fontWeight: 800, textTransform: "uppercase", letterSpacing: 1, marginTop: 4 }}>Tue</div>
+          <div style={{ color: "#000", fontSize: 32, fontWeight: 300, lineHeight: 1, marginTop: -2, letterSpacing: -1 }}>17</div>
+        </div>
+      )
+    },
+    { 
+      name: "Photos", 
+      bg: "#fff", 
+      content: (
+        <div style={{ position: "relative", width: 34, height: 34 }}>
+          <div style={{ position: "absolute", top: 0, left: 17, width: 17, height: 17, background: "#FF2D55", borderTopRightRadius: 17, borderBottomRightRadius: 17, transformOrigin: "0 100%", transform: "rotate(0deg)", opacity: 0.9 }}/>
+          <div style={{ position: "absolute", top: 17, left: 17, width: 17, height: 17, background: "#5856D6", borderBottomRightRadius: 17, borderBottomLeftRadius: 17, transformOrigin: "0 0", transform: "rotate(0deg)", opacity: 0.9 }}/>
+          <div style={{ position: "absolute", top: 17, left: 0, width: 17, height: 17, background: "#34C759", borderBottomLeftRadius: 17, borderTopLeftRadius: 17, transformOrigin: "100% 0", transform: "rotate(0deg)", opacity: 0.9 }}/>
+          <div style={{ position: "absolute", top: 0, left: 0, width: 17, height: 17, background: "#FFCC00", borderTopLeftRadius: 17, borderTopRightRadius: 17, transformOrigin: "100% 100%", transform: "rotate(0deg)", opacity: 0.9 }}/>
+        </div>
+      )
+    },
+    { 
+      name: "Camera", 
+      bg: "linear-gradient(180deg, #D5D6D8 0%, #999A9C 100%)", 
+      content: (
+        <div style={{ display: "grid", placeItems: "center", width: "100%", height: "100%" }}>
+          <div style={{ width: 40, height: 30, background: "#222", borderRadius: 6, display: "grid", placeItems: "center", position: "relative" }}>
+            <div style={{ position: "absolute", top: -4, right: 6, width: 8, height: 4, background: "#222", borderTopLeftRadius: 2, borderTopRightRadius: 2 }}/>
+            <div style={{ position: "absolute", top: 4, right: 4, width: 4, height: 4, background: "#FFCC00", borderRadius: "50%" }}/>
+            <div style={{ width: 18, height: 18, borderRadius: "50%", background: "#444", border: "2px solid #555", display: "grid", placeItems: "center" }}>
+              <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#111" }}/>
+            </div>
+          </div>
+        </div>
+      )
+    },
+    { 
+      name: "Weather", 
+      bg: "linear-gradient(180deg, #4A90E2 0%, #004499 100%)", 
+      icon: <Icon.Sun size={32} stroke="#fff" fill="#FFCC00"/> 
+    },
+    { 
+      name: "Clock", 
+      bg: "#000", 
+      content: (
+        <div style={{ width: 48, height: 48, borderRadius: 24, border: "2px solid #fff", position: "relative", display: "grid", placeItems: "center" }}>
+          <div style={{ position: "absolute", width: 2, height: 14, background: "#fff", top: 8, borderRadius: 1 }}/>
+          <div style={{ position: "absolute", width: 2, height: 14, background: "#fff", right: 12, top: 22, transform: "rotate(90deg)", borderRadius: 1 }}/>
+          <div style={{ position: "absolute", width: 2, height: 18, background: "#FF9500", top: 22, left: 16, transform: "rotate(-45deg)", transformOrigin: "bottom center", borderRadius: 1 }}/>
+          <div style={{ width: 4, height: 4, background: "#FF9500", borderRadius: 2, zIndex: 2 }}/>
+        </div>
+      )
+    },
+    { 
+      name: "Maps", 
+      bg: "linear-gradient(135deg, #34C759 0%, #A2E4B8 100%)", 
+      content: (
+        <div style={{ position: "relative", width: "100%", height: "100%", overflow: "hidden", borderRadius: 14 }}>
+          <div style={{ position: "absolute", top: -10, right: -10, width: 40, height: 40, background: "#0A84FF", transform: "rotate(45deg)" }}/>
+          <div style={{ position: "absolute", bottom: -10, left: -10, width: 40, height: 40, background: "#FFCC00", transform: "rotate(45deg)" }}/>
+          <Icon.ArrowRight size={24} stroke="#fff" strokeWidth={3} style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%) rotate(-45deg)" }}/>
+        </div>
+      )
+    },
+    { 
+      name: "Notes", 
+      bg: "#fff", 
+      content: (
+        <div style={{ width: "100%", height: "100%", display: "flex", flexDirection: "column" }}>
+          <div style={{ height: 16, background: "#FFCC00", width: "100%" }}/>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 4, padding: "8px 10px" }}>
+            <div style={{ height: 2, background: "#E5E5EA", width: "100%", borderRadius: 1 }}/>
+            <div style={{ height: 2, background: "#E5E5EA", width: "100%", borderRadius: 1 }}/>
+            <div style={{ height: 2, background: "#E5E5EA", width: "70%", borderRadius: 1 }}/>
+          </div>
+        </div>
+      )
+    },
+    { 
+      name: "Reminders", 
+      bg: "#fff", 
+      content: (
+        <div style={{ display: "flex", flexDirection: "column", gap: 6, padding: 12, width: "100%", height: "100%", justifyContent: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: 4, background: "#0A84FF" }}/><div style={{ flex: 1, height: 3, background: "#E5E5EA", borderRadius: 2 }}/></div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: 4, background: "#FF3B30" }}/><div style={{ flex: 1, height: 3, background: "#E5E5EA", borderRadius: 2 }}/></div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 8, height: 8, borderRadius: 4, background: "#FFCC00" }}/><div style={{ flex: 1, height: 3, background: "#E5E5EA", borderRadius: 2 }}/></div>
+        </div>
+      )
+    },
+    { 
+      name: "Settings", 
+      bg: "linear-gradient(180deg, #8E8E93 0%, #666 100%)", 
+      content: (
+        <div style={{ width: 44, height: 44, background: "#D1D1D6", borderRadius: 22, display: "grid", placeItems: "center" }}>
+          <Icon.Settings size={32} stroke="#333" strokeWidth={1.5}/>
+        </div>
+      )
+    },
+    { 
+      name: "VeggieTrack", 
+      bg: "linear-gradient(135deg, #4ADE80 0%, #22C55E 100%)", 
+      content: <Icon.Logo size={36} fill="#0F1D15"/>, 
+      isTarget: true 
+    },
   ];
 
   return (
     <div className="scene" style={{ background: wallpaper, color: "#fff" }}>
-      {/* Status bar spacer */}
       <div style={{ height: 44 }} />
       
       {/* App Grid */}
@@ -361,42 +457,56 @@ function IOSHomeScreen({ onNav }) {
         {apps.map((a, i) => (
           <div key={i} onClick={() => a.isTarget && onNav("login")} style={{
             display: "flex", flexDirection: "column", alignItems: "center", cursor: a.isTarget ? "pointer" : "default",
-            opacity: a.isTarget ? 1 : 0.9, transition: "transform .1s", transform: "scale(1)"
+            opacity: a.isTarget ? 1 : 0.9, transition: "all .2s cubic-bezier(0.175, 0.885, 0.32, 1.275)", transform: "scale(1)"
           }} className={a.isTarget ? "anim-pop hover-scale" : ""}>
             <div style={{
-              width: 62, height: 62, borderRadius: 14, background: a.bg,
+              width: 62, height: 62, borderRadius: 16, background: a.bg,
               display: "grid", placeItems: "center", color: "#fff",
-              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              boxShadow: "0 6px 16px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.4)",
+              overflow: "hidden", position: "relative",
               animationDelay: a.isTarget ? "400ms" : "0"
             }}>
-              {a.icon}
+              {a.content || a.icon}
             </div>
-            <div style={{ fontSize: 11, fontWeight: 500, marginTop: 6, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>
+            <div style={{ fontSize: 11, fontWeight: 600, marginTop: 6, letterSpacing: -0.2, textShadow: "0 1px 3px rgba(0,0,0,0.5)" }}>
               {a.name}
             </div>
           </div>
         ))}
       </div>
       
-      {/* Dock */}
+      {/* Dock (iOS 26 Style — floating glassmorphism) */}
       <div style={{
-        position: "absolute", bottom: 20, left: 16, right: 16, height: 90,
-        background: "rgba(255,255,255,0.3)", backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)", borderRadius: 32,
+        position: "absolute", bottom: 24, left: 16, right: 16, height: 86,
+        background: "rgba(255,255,255,0.25)", backdropFilter: "blur(30px) saturate(150%)",
+        WebkitBackdropFilter: "blur(30px) saturate(150%)", borderRadius: 34,
+        boxShadow: "0 8px 32px rgba(0,0,0,0.15), inset 0 1px 2px rgba(255,255,255,0.4)",
         display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px"
       }}>
         {[
-          { bg: "#34C759", icon: <Icon.User/> }, // Phone mock
-          { bg: "#0A84FF", icon: <Icon.Mail/> }, // Mail mock
-          { bg: "#FF3B30", icon: <Icon.Heart/> }, // Health mock
-          { bg: "#FF9500", icon: <Icon.Bolt/> }, // Shortcuts mock
+          { 
+            bg: "linear-gradient(180deg, #34C759 0%, #28A745 100%)", 
+            content: <Icon.User size={32} stroke="#fff" strokeWidth={1.5}/> // Phone Mock
+          }, 
+          { 
+            bg: "linear-gradient(180deg, #4AA1FF 0%, #0055FF 100%)", 
+            content: <Icon.Mail size={32} stroke="#fff" strokeWidth={1.5}/> // Mail Mock
+          }, 
+          { 
+            bg: "linear-gradient(180deg, #FF5E3A 0%, #FF2A6D 100%)", 
+            content: <Icon.Heart size={32} fill="#fff" stroke="none"/> // Health Mock
+          }, 
+          { 
+            bg: "linear-gradient(180deg, #FFCC00 0%, #FF9500 100%)", 
+            content: <Icon.Bolt size={32} fill="#fff" stroke="none"/> // Shortcuts Mock
+          }, 
         ].map((d, i) => (
           <div key={i} style={{
-            width: 62, height: 62, borderRadius: 14, background: d.bg,
+            width: 62, height: 62, borderRadius: 16, background: d.bg,
             display: "grid", placeItems: "center", color: "#fff",
-            opacity: 0.9
+            boxShadow: "0 4px 12px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.3)"
           }}>
-            {d.icon}
+            {d.content}
           </div>
         ))}
       </div>
