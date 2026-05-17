@@ -325,8 +325,9 @@ function LogFoodScreen({ state, setState, onNav, showToast }) {
 }
 
 // ───── Edit Log ─────
-function EditLogScreen({ state, setState, onNav, showToast }) {
-  const { count, target, streak } = state;
+function EditLogScreen({ state, setState, onNav, showToast, params = {} }) {
+  const { target, streak } = state;
+  const count = params.serves !== undefined ? params.serves : state.count;
   const [newCount, setNewCount] = useStateH(Math.max(0, count - 1));
   const [reason, setReason] = useStateH("over");
   const [confirmed, setConfirmed] = useStateH(false);
@@ -348,7 +349,9 @@ function EditLogScreen({ state, setState, onNav, showToast }) {
   const correctedSame = newCount === count;
 
   const save = () => {
-    setState(s => ({ ...s, count: newCount }));
+    if (!params.date) {
+      setState(s => ({ ...s, count: newCount }));
+    }
     setConfirmed(true);
   };
 
@@ -379,7 +382,7 @@ function EditLogScreen({ state, setState, onNav, showToast }) {
           <p style={{
             fontSize: 14, color: "var(--text-2)", marginTop: 10, lineHeight: 1.5, maxWidth: 280,
           }}>
-            Today's record has been updated.<br/>Your weekly average has been recalculated.
+            {params.date ? `${params.date}'s` : "Today's"} record has been updated.<br/>Your weekly average has been recalculated.
           </p>
 
           {/* Change pill */}
@@ -442,7 +445,7 @@ function EditLogScreen({ state, setState, onNav, showToast }) {
   // ─── Edit form ───
   return (
     <div className="scene has-dock">
-      <BackHeader onNav={onNav} to="log" label="Today's Log" title="Edit Today's Record" subtitle={today}/>
+      <BackHeader onNav={onNav} to={params.date ? "progress" : "log"} label={params.date ? "Activity" : "Today's Log"} title={params.date ? `Edit ${params.date}` : "Edit Today's Record"} subtitle={params.date ? undefined : today}/>
 
       <div className="page-pad">
         {/* Original count card */}

@@ -103,7 +103,10 @@ function ProgressScreen({ state, setState, onNav }) {
                 const hit = d.serves >= target;
                 return (
                   <div key={i}
-                    onClick={() => onNav("edit-log")}
+                    onClick={() => {
+                      const fullDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+                      onNav("edit-log", { date: d.isToday ? undefined : (i === dayData.length - 2 ? "Yesterday" : fullDays[i]), serves: d.serves, isToday: d.isToday });
+                    }}
                     className={d.isToday ? "today-bar-pulse" : ""}
                     style={{
                       display: "flex", flexDirection: "column", alignItems: "center", gap: 6,

@@ -112,7 +112,7 @@ function App() {
 
       {r === "home" && <MainScreens.HomeScreen state={appState} setState={setAppState} onNav={navigate}/>}
       {r === "log" && <MainScreens.LogFoodScreen state={appState} setState={setAppState} onNav={navigate} showToast={showToast}/>}
-      {r === "edit-log" && <MainScreens.EditLogScreen state={appState} setState={setAppState} onNav={navigate} showToast={showToast}/>}
+      {r === "edit-log" && <MainScreens.EditLogScreen state={appState} setState={setAppState} onNav={navigate} showToast={showToast} params={p}/>}
 
       {r === "progress" && <FlowScreens.ProgressScreen state={appState} setState={setAppState} onNav={navigate}/>}
       {r === "calendar" && <FlowScreens.CalendarScreen state={appState} onNav={navigate}/>}
