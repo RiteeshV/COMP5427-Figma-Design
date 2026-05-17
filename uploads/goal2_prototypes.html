@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TPP09 — Goal 2: Correct Accidental Logging</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+
+    :root {
+      --red: #DC2626;
+      --red-light: #EF4444;
+      --red-pale: #FEF2F2;
+      --red-mid: #FECACA;
+      --amber: #D97706;
+      --amber-pale: #FEF3C7;
+      --green: #15803D;
+      --green-pale: #DCFCE7;
+      --green-dark: #14532D;
+      --text: #111827;
+      --muted: #6B7280;
+      --white: #FFFFFF;
+      --gr50: #F9FAFB;
+      --gr100: #F3F4F6;
+      --gr200: #E5E7EB;
+      --gr300: #D1D5DB;
+      --gr500: #6B7280;
+      --gr700: #374151;
+      --gr900: #111827;
+      --phone-w: 393px;
+      --phone-h: 852px;
+      --radius: 54px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #0a0a0a;
+      min-height: 100vh;
+      padding: 40px 20px 80px;
+      color: var(--text);
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .page-header h1 {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--red-light);
+      letter-spacing: -0.5px;
+    }
+
+    .page-header p {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .proto-section {
+      margin-bottom: 80px;
+    }
+
+    .proto-label {
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+      color: #fff;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .proto-desc {
+      font-size: 13px;
+      color: #9ca3af;
+      text-align: center;
+      margin-bottom: 36px;
+      max-width: 820px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.6;
+    }
+
+    .task-tag {
+      display: inline-block;
+      background: var(--red);
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      padding: 3px 12px;
+      border-radius: 20px;
+      margin-bottom: 10px;
+    }
+
+    .task-tag.additional {
+      background: var(--amber);
+    }
+
+    .wireflow {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+      row-gap: 40px;
+    }
+
+    .phone-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .screen-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: #fff;
+      margin-bottom: 10px;
+      text-align: center;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    .phone {
+      width: var(--phone-w);
+      height: var(--phone-h);
+      background: #1A1A1A;
+      border-radius: var(--radius);
+      padding: 14px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5), inset 0 0 0 1px #2a2a2a;
+      flex-shrink: 0;
+    }
+
+    .phone-inner {
+      width: 100%;
+      height: 100%;
+      background: var(--gr50);
+      border-radius: calc(var(--radius) - 10px);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .dynamic-island {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 12px;
+      width: 120px;
+      height: 34px;
+      background: #1A1A1A;
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px 10px;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .status-time {
+      font-family: 'DM Mono', monospace;
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    .status-icons {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+    }
+
+    .status-icons .percentage {
+      font-family: 'Fira Code', monospace;
+      font-size: 1.4em;
+      font-weight: bold;
+      letter-spacing: 0;
+      margin-left: 2px;
+    }
+
+    .signal-bars {
+      display: inline-block;
+      transform: scaleX(0.7);
+      transform-origin: left;
+      margin-right: -5px;
+    }
+
+    .screen-content {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .arrow-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      margin-top: 100px;
+      flex-shrink: 0;
+    }
+
+    .arrow-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: #f87171;
+      text-align: center;
+      max-width: 80px;
+      line-height: 1.4;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .arrow-wrap.amber .arrow-label {
+      color: #fbbf24;
+    }
+
+    .arrow-line {
+      width: 60px;
+      height: 3px;
+      background: #ef4444;
+      position: relative;
+    }
+
+    .arrow-line::after {
+      content: '▶';
+      position: absolute;
+      right: -12px;
+      top: -8px;
+      color: #ef4444;
+      font-size: 16px;
+    }
+
+    .arrow-wrap.amber .arrow-line {
+      background: #f59e0b;
+    }
+
+    .arrow-wrap.amber .arrow-line::after {
+      color: #f59e0b;
+    }
+
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 50px 0 40px;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #333;
+    }
+
+    .section-divider span {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: #555;
+      white-space: nowrap;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* ===== APP BAR ===== */
+    .app-bar {
+      background: var(--green-dark);
+      color: #fff;
+      padding: 28px 20px 16px;
+      border-radius: 0 0 24px 24px;
+      flex-shrink: 0;
+    }
+
+    .ab-back {
+      font-size: 11px;
+      opacity: .6;
+      font-family: 'DM Mono', monospace;
+      margin-bottom: 6px;
+    }
+
+    .ab-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .ab-sub {
+      font-size: 11px;
+      opacity: .6;
+      margin-top: 2px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ===== TODAY CARD - CURRENT STATE ===== */
+    .today-state {
+      margin: 16px 18px 0;
+      background: #fff;
+      border-radius: 20px;
+      padding: 16px 18px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, .06);
+      flex-shrink: 0;
+    }
+
+    .ts-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-bottom: 10px;
+    }
+
+    .ts-serves-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ts-serves-big {
+      font-family: 'Sora', sans-serif;
+      font-size: 56px;
+      font-weight: 800;
+      color: var(--green);
+      line-height: 1;
+    }
+
+    .ts-serves-big.red {
+      color: var(--red);
+    }
+
+    .ts-serves-big.amber {
+      color: var(--amber);
+    }
+
+    .ts-right {
+      text-align: right;
+    }
+
+    .ts-of {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .ts-pct {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--green);
+    }
+
+    .ts-bar {
+      height: 10px;
+      background: var(--gr200);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .ts-fill {
+      height: 100%;
+      border-radius: 10px;
+    }
+
+    .ts-fill.green {
+      background: linear-gradient(90deg, #22c55e, #15803d);
+    }
+
+    .ts-fill.amber {
+      background: linear-gradient(90deg, #fbbf24, #d97706);
+    }
+
+    .ts-fill.red {
+      background: linear-gradient(90deg, #f87171, #dc2626);
+    }
+
+    /* ===== EDIT PANEL ===== */
+    .edit-panel {
+      margin: 12px 18px 0;
+      background: var(--red-pale);
+      border-radius: 20px;
+      padding: 16px 18px;
+      border: 2px solid var(--red-mid);
+      flex-shrink: 0;
+    }
+
+    .ep-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ep-counter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .ep-btn {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px solid var(--red);
+      background: white;
+      color: var(--red);
+      font-size: 28px;
+      font-weight: 300;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .ep-count {
+      font-family: 'Sora', sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      color: var(--red);
+      line-height: 1;
+    }
+
+    .ep-label {
+      font-size: 11px;
+      color: var(--red);
+      text-align: center;
+      margin-top: 2px;
+      font-family: 'DM Mono', monospace;
+    }
+
+    .ep-reason-label {
+      font-size: 12px;
+      color: var(--red);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .ep-reason-options {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .ep-reason-opt {
+      background: white;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 12px;
+      color: var(--gr700);
+      border: 2px solid var(--red-mid);
+      cursor: pointer;
+    }
+
+    .ep-reason-opt.selected {
+      border-color: var(--red);
+      background: var(--red-pale);
+      font-weight: 600;
+      color: var(--red);
+    }
+
+    .ep-save-btn {
+      width: 100%;
+      height: 48px;
+      border-radius: 14px;
+      border: none;
+      background: var(--red);
+      color: white;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .ep-cancel {
+      width: 100%;
+      text-align: center;
+      font-size: 13px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      margin-top: 10px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* ===== CONFIRMATION ===== */
+    .confirm-full {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 30px 28px;
+      background: white;
+    }
+
+    .cf-icon {
+      font-size: 68px;
+      margin-bottom: 18px;
+    }
+
+    .cf-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--green-dark);
+      margin-bottom: 10px;
+    }
+
+    .cf-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .cf-change-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--gr100);
+      border-radius: 14px;
+      padding: 12px 20px;
+      margin-bottom: 16px;
+    }
+
+    .cf-old {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--red);
+      text-decoration: line-through;
+    }
+
+    .cf-arrow {
+      font-size: 20px;
+      color: var(--muted);
+    }
+
+    .cf-new {
+      font-family: 'Sora', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--green);
+    }
+
+    .cf-note {
+      font-size: 12px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      margin-bottom: 20px;
+    }
+
+    .cf-btn {
+      background: var(--green);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      padding: 12px 28px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .cf-link {
+      margin-top: 14px;
+      font-size: 13px;
+      color: var(--green);
+      text-decoration: underline;
+      cursor: pointer;
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ===== HISTORY VIEW ===== */
+    .hist-header {
+      background: var(--green-dark);
+      color: white;
+      padding: 28px 20px 16px;
+      border-radius: 0 0 24px 24px;
+      flex-shrink: 0;
+    }
+
+    .hh-back {
+      font-size: 11px;
+      opacity: .6;
+      font-family: 'DM Mono', monospace;
+      margin-bottom: 4px;
+    }
+
+    .hh-title {
+      font-family: 'Sora', sans-serif;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .hh-sub {
+      font-size: 11px;
+      opacity: .6;
+      font-family: 'DM Mono', monospace;
+      margin-top: 2px;
+    }
+
+    .hist-body {
+      flex: 1;
+      padding: 14px 18px;
+      overflow: hidden;
+    }
+
+    .hist-section-label {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .hist-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gr200);
+    }
+
+    .hist-row.today {
+      background: #F0FDF4;
+      margin: 0 -4px;
+      padding: 12px 4px;
+      border-radius: 12px;
+      border-bottom: none;
+      margin-bottom: 2px;
+    }
+
+    .hist-row.editing {
+      background: var(--red-pale);
+      margin: 0 -4px;
+      padding: 12px 4px;
+      border-radius: 12px;
+      border-bottom: none;
+      border: 2px solid var(--red-mid);
+      margin-bottom: 2px;
+    }
+
+    .hist-day-col {
+      min-width: 80px;
+    }
+
+    .hist-day {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .hist-date {
+      font-size: 10px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+    }
+
+    .hist-dots {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+      align-items: center;
+    }
+
+    .hdot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--gr200);
+    }
+
+    .hdot.f {
+      background: var(--green);
+    }
+
+    .hdot.r {
+      background: var(--red-mid);
+    }
+
+    .hist-serves {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      font-weight: 700;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .hist-edit-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: white;
+      border: 1px solid var(--gr300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .hist-edit-btn.active {
+      background: var(--red);
+      border-color: var(--red);
+    }
+
+    /* Inline edit drawer */
+    .inline-edit {
+      margin: 0 0 8px;
+      background: var(--red-pale);
+      border-radius: 16px;
+      padding: 14px;
+      border: 2px solid var(--red-mid);
+    }
+
+    .ie-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      margin-bottom: 10px;
+    }
+
+    .ie-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .ie-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--red);
+      background: white;
+      color: var(--red);
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .ie-count {
+      font-family: 'Sora', sans-serif;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--red);
+    }
+
+    .ie-save {
+      width: 100%;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: var(--red);
+      color: white;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    .ie-cancel {
+      width: 100%;
+      text-align: center;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      margin-top: 6px;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    /* nav bar */
+    .nav {
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0 30px;
+      background: #fff;
+      border-top: 1px solid var(--gr200);
+      flex-shrink: 0;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    .nav-item.active {
+      color: var(--green);
+    }
+
+    .ni {
+      font-size: 22px;
+    }
+
+    .hi-bar {
+      width: 130px;
+      height: 5px;
+      background: #1c1c1e;
+      border-radius: 10px;
+      opacity: .15;
+      margin: 8px auto;
+      flex-shrink: 0;
+    }
+
+    /* Warning banner */
+    .warn-banner {
+      margin: 10px 18px 0;
+      background: var(--amber-pale);
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .wb-icon {
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .wb-text {
+      font-size: 12px;
+      color: var(--amber);
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    /* State indicator */
+    .state-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--red-pale);
+      border: 1.5px solid var(--red-mid);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-size: 11px;
+      color: var(--red);
+      font-family: 'DM Mono', monospace;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .state-pill.green {
+      background: var(--green-pale);
+      border-color: #86efac;
+      color: var(--green);
+    }
+
+    .state-pill.amber {
+      background: var(--amber-pale);
+      border-color: #fde68a;
+      color: var(--amber);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="page-header">
+    <h1>✎ User Goal 2 — Correct Accidental Logging</h1>
+    <p>Persona: Muthu Rajkumar · TTM: Maintenance · Prescribed + Additional Tasks</p>
+  </div>
+
+  <!-- ===== PRESCRIBED TASK 2A ===== -->
+  <div class="proto-section" id="prescribed">
+    <div style="text-align:center">
+      <span class="task-tag">PRESCRIBED TASK 2A — Correct Today's Log (3 → 2 serves)</span>
+    </div>
+    <div class="proto-label">Today's Log Edit — Lunch Overcount Correction</div>
+    <div class="proto-desc">
+      <strong style="color:#f87171;">Current state:</strong> Logger shows 3 serves for today.<br>
+      Muthu realises he over-estimated his lunch vegetables. He corrects today's record from 3 to 2 serves.<br>
+      Wireflow: Dashboard (3 serves) → Edit Mode → Confirmation.
+    </div>
+
+    <div class="wireflow">
+
+      <!-- SCREEN 1: Dashboard showing 3 serves -->
+       
+      <!-- SCREEN 2: Edit mode -->
+      <div class="phone-wrap">
+        <div class="screen-label">SCREEN 1<br>Edit Mode — tap [−] to reduce</div>
+        <div class="phone">
+          <div class="phone-inner">
+            <div class="dynamic-island"></div>
+            <div class="status-bar"><span class="status-time">10:15</span><span class="status-icons"><span
+                  class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 91</span></div>
+            <div class="screen-content">
+              <div class="app-bar">
+                <div class="ab-back">← Today's Log</div>
+                <div class="ab-title">Edit Today's Record</div>
+                <div class="ab-sub">Sunday, 19 April</div>
+              </div>
+              <div style="padding:14px 18px;flex:1;display:flex;flex-direction:column;">
+                <div
+                  style="background:#fff;border-radius:18px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:12px;">
+                  <div
+                    style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;">
+                    Original count</div>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <div
+                      style="font-family:'Sora',sans-serif;font-size:36px;font-weight:800;color:var(--red);text-decoration:line-through;">
+                      3</div>
+                    <div style="font-size:12px;color:var(--muted);font-family:'DM Mono',monospace;">serves<br>(before
+                      correction)</div>
+                  </div>
+                </div>
+                <div class="edit-panel">
+                  <div class="ep-title">✎ Correct to:</div>
+                  <div class="ep-counter-row">
+                    <div class="ep-btn">−</div>
+                    <div style="text-align:center;">
+                      <div class="ep-count">2</div>
+                      <div class="ep-label">new count</div>
+                    </div>
+                    <div class="ep-btn" style="opacity:.35;">+</div>
+                  </div>
+                  <div class="ep-reason-label">Why are you correcting?</div>
+                  <div class="ep-reason-options">
+                    <div class="ep-reason-opt selected">⬆️ Over-estimated portion (lunch)</div>
+                    <div class="ep-reason-opt">📝 Forgot I'd already counted this</div>
+                    <div class="ep-reason-opt">❌ Entered wrong number</div>
+                  </div>
+                  <button class="ep-save-btn">Save Correction</button>
+                  <div class="ep-cancel">Cancel</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow-wrap">
+        <div class="arrow-label">Tap "Save Correction"</div>
+        <div class="arrow-line"></div>
+      </div>
+
+      <!-- SCREEN 3: Confirmation -->
+      <div class="phone-wrap">
+        <div class="screen-label">SCREEN 2<br>Correction Confirmed</div>
+        <div class="phone">
+          <div class="phone-inner">
+            <div class="dynamic-island"></div>
+            <div class="status-bar"><span class="status-time">10:16</span><span class="status-icons"><span
+                  class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 91</span></div>
+            <div class="screen-content">
+              <div class="confirm-full">
+                <div class="cf-icon">✅</div>
+                <div class="cf-title">Log Corrected</div>
+                <div class="cf-sub">Today's record has been updated.<br>Your weekly average has been recalculated.</div>
+                <div class="cf-change-pill">
+                  <div class="cf-old">3</div>
+                  <div class="cf-arrow">→</div>
+                  <div class="cf-new">2</div>
+                </div>
+                <div class="cf-note">Reason: Over-estimated lunch portion</div>
+                <div
+                  style="background:var(--green-pale);border-radius:14px;padding:12px 16px;text-align:center;margin-bottom:16px;width:100%">
+                  <div style="font-size:12px;font-weight:700;color:var(--green);">2/5 serves today — 3 to go</div>
+                  <div
+                    style="font-size:11px;color:var(--green);opacity:.7;margin-top:2px;font-family:'DM Mono',monospace;">
+                    🔥 21-day streak still active</div>
+                </div>
+                <button class="cf-btn">Back to Dashboard</button>
+                <div class="cf-link">+ Add more serves now</div>
+              </div>
+              <div class="hi-bar"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section-divider"><span>additional task 2b</span></div>
+
+  <div style="text-align:center;margin-top:60px;font-family:'DM Mono',monospace;font-size:11px;color:#555;">
+    TPP09 · Goal 2 Prototypes · COMP5427 Usability Engineering<br>
+    Persona: Muthu Rajkumar · Maintenance Stage · eatforhealth.gov.au
+  </div>
+
+</body>
+
+</html>
