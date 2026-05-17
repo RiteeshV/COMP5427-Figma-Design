@@ -26,7 +26,7 @@ function LoginScreen({ onNav, theme }) {
       {faceActive && (
         <div style={{
           position: "absolute", left: "50%",
-          transform: "translateX(-50%)", zIndex: 50,
+          transform: "translateX(-50%)", zIndex: 110,
           background: "#000",
           display: "flex", alignItems: "center", justifyContent: "center", gap: 14,
           padding: "0 18px", overflow: "hidden",
