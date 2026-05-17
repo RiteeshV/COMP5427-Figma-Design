@@ -506,7 +506,16 @@ function CoachScreen({ state, onNav, showToast, context }) {
       });
       setMessages(m => [...m, { role: "ai", text: reply.trim() }]);
     } catch (e) {
-      setMessages(m => [...m, { role: "ai", text: "I'm offline right now — but here's a tip: aim for one veggie at each meal! 🥗" }]);
+      let reply = "I'm offline right now — but aim for one veggie at each meal! 🥗";
+      if (text.toLowerCase().includes("plan")) {
+        reply = "Here's your plan for tomorrow's shoot:\n• 7am: Spinach smoothie (1 serve)\n• 12pm: Salad bar (2 serves)\n• 3pm: Apple + almonds (1 serve)\n• 7pm: Light dinner with broccoli (1 serve)\n\nShall I set a 7:00 AM reminder?";
+      } else if (text.toLowerCase().includes("reminder") || text.toLowerCase().includes("yes")) {
+        reply = "Done! I've set a reminder for 7:00 AM tomorrow. Tomorrow — Shoot Day 🎬. You've got this!";
+        showToast("7:00 AM Reminder Set");
+      } else if (isStreakWarning) {
+        reply = "You can still save your streak tonight! Grab a quick carrot or some cherry tomatoes.";
+      }
+      setMessages(m => [...m, { role: "ai", text: reply }]);
     } finally {
       setThinking(false);
     }
