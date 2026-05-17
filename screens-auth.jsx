@@ -21,7 +21,7 @@ function LoginScreen({ onNav, theme }) {
       : { width: 120, height: 34, borderRadius: 17, top: 12 };
 
   return (
-    <div className="scene" style={{ position: "relative" }}>
+    <div className="scene" style={{ position: "relative", zIndex: faceActive ? 200 : undefined }}>
       {/* Face ID overlay — morphs out of the Dynamic Island, scans, then shrinks */}
       {faceActive && (
         <div style={{
