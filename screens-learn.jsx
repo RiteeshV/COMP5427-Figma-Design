@@ -121,104 +121,54 @@ const LEARN_TOPICS = [
 function LearnScreen({ onNav, learnState }) {
   const readCount = LEARN_TOPICS.filter(t => learnState[t.id]).length;
   const pct = Math.round((readCount / LEARN_TOPICS.length) * 100);
-  const totalXP = readCount * 50;
-  
-  // Find the first unread topic to recommend
-  const recommendedTopic = LEARN_TOPICS.find(t => !learnState[t.id]) || LEARN_TOPICS[0];
 
-  const iconFor = (icon, color, size = 40, iconSize = 20) => {
-    const map = { leaf: <Icon.Leaf size={iconSize}/>, bean: <Icon.Bean size={iconSize}/>, carrot: <Icon.Carrot size={iconSize}/>, apple: <Icon.Apple size={iconSize}/>, drop: <Icon.Drop size={iconSize}/> };
-    return <span style={{ width: size, height: size, borderRadius: size/4, background: color, display: "grid", placeItems: "center", color: "#fff" }}>{map[icon]}</span>;
+  const iconFor = (icon, color) => {
+    const map = { leaf: <Icon.Leaf/>, bean: <Icon.Bean/>, carrot: <Icon.Carrot/>, apple: <Icon.Apple/>, drop: <Icon.Drop/> };
+    return <span style={{ width: 40, height: 40, borderRadius: 10, background: color, display: "grid", placeItems: "center", color: "#fff" }}>{map[icon]}</span>;
   };
 
   return (
-    <div className="scene has-dock" style={{ background: "var(--bg-2)" }}>
-      <div style={{ padding: "14px 24px 0" }}>
-        <h1 className="page-title">Learn</h1>
-        <p className="page-sub">Level up your nutrition</p>
-      </div>
+    <div className="scene has-dock">
+      <BackHeader onNav={onNav} to="home" label="Home" title="Learn" subtitle="Vegetable serving size guide"/>
 
       <div className="page-pad">
-        {/* Bento Dashboard */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 14 }}>
-          {/* Recommended Card (Full width) */}
-          <div className="card anim-up" onClick={() => onNav("learn-detail", { topic: recommendedTopic.id })} style={{
-            gridColumn: "1 / -1", cursor: "pointer", background: "var(--card)", padding: 16,
-            display: "flex", gap: 14, alignItems: "center",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.12)", border: `1.5px solid ${recommendedTopic.color}`,
-          }}>
-            {iconFor(recommendedTopic.icon, recommendedTopic.color, 48, 24)}
-            <div style={{ flex: 1 }}>
-              <div className="eyebrow" style={{ color: recommendedTopic.color }}>RECOMMENDED</div>
-              <div style={{ fontSize: 16, fontWeight: 700, marginTop: 2 }}>{recommendedTopic.title}</div>
-            </div>
-            <div style={{ width: 32, height: 32, borderRadius: 16, background: recommendedTopic.color, display: "grid", placeItems: "center", color: "#fff" }}>
-              <Icon.ArrowRight size={18} />
-            </div>
+        <div style={{
+          marginTop: 14, padding: 18, borderRadius: 18, background: "var(--green)", color: "#fff",
+        }}>
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 14, fontSize: 15, fontWeight: 700 }}>
+            {readCount} / {LEARN_TOPICS.length} topics completed
+            <span style={{ opacity: 0.7 }}>·</span>
+            {pct}%
           </div>
-
-          {/* XP Card */}
-          <div className="card anim-up" style={{ padding: 14, animationDelay: "50ms", background: "var(--card)" }}>
-            <Icon.Sparkles size={18} stroke="var(--yellow)"/>
-            <div style={{ fontSize: 24, fontWeight: 800, color: "var(--text)", marginTop: 6, lineHeight: 1 }}>{totalXP}</div>
-            <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 2 }}>Total XP</div>
-          </div>
-
-          {/* Progress Card */}
-          <div className="card anim-up" style={{ padding: 14, animationDelay: "100ms", background: "var(--card)" }}>
-            <Icon.Target size={18} stroke="var(--teal)"/>
-            <div style={{ fontSize: 24, fontWeight: 800, color: "var(--text)", marginTop: 6, lineHeight: 1 }}>{pct}%</div>
-            <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 2 }}>Course complete</div>
+          <div style={{ marginTop: 10, height: 6, background: "rgba(255,255,255,0.25)", borderRadius: 3, overflow: "hidden" }}>
+            <div style={{ width: pct + "%", height: "100%", background: "#fff", borderRadius: 3, transition: "width .4s" }}/>
           </div>
         </div>
 
-        {/* Gamified Path */}
-        <div className="eyebrow" style={{ marginTop: 28, marginBottom: 16 }}>YOUR JOURNEY</div>
-        
-        <div style={{ position: "relative", paddingBottom: 60, display: "flex", flexDirection: "column", gap: 0 }}>
-          {/* Background Path Line */}
-          <div style={{
-            position: "absolute", top: 30, bottom: 50, left: "50%", width: 6, marginLeft: -3,
-            background: "var(--card-3)", borderRadius: 3, zIndex: 0
-          }}/>
-
-          {LEARN_TOPICS.map((t, i) => {
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 16 }}>
+          {LEARN_TOPICS.map(t => {
             const isRead = learnState[t.id];
-            const isNext = !isRead && (i === 0 || learnState[LEARN_TOPICS[i-1].id]);
-            const side = i % 2 === 0 ? "left" : "right";
-            const locked = !isRead && !isNext;
-            
             return (
-              <div key={t.id} style={{
-                position: "relative", zIndex: 1, display: "flex", justifyContent: side === "left" ? "flex-start" : "flex-end",
-                marginBottom: -10,
-                padding: "0 20px"
-              }}>
-                <div onClick={() => onNav("learn-detail", { topic: t.id })} className="anim-pop" style={{
-                  cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center",
-                  width: 130, animationDelay: `${150 + i * 50}ms`, opacity: locked ? 0.6 : 1
-                }}>
-                  {/* Topic Node */}
-                  <div style={{
-                    width: 74, height: 74, borderRadius: 37,
-                    background: isRead ? t.color : isNext ? t.color : "var(--card-2)",
-                    border: `5px solid ${isRead || isNext ? "var(--bg-2)" : "var(--card-3)"}`,
-                    boxShadow: isNext ? `0 0 0 4px ${t.color}40, 0 8px 24px ${t.color}60` : "0 4px 12px rgba(0,0,0,0.1)",
-                    display: "grid", placeItems: "center", color: isRead || isNext ? "#fff" : "var(--text-3)",
-                    transition: "transform .2s",
-                    transform: isNext ? "scale(1.15)" : "scale(1)",
-                    position: "relative"
-                  }}>
-                    {isRead ? <Icon.Check size={36} strokeWidth={3}/> : locked ? <Icon.Lock size={28}/> : <Icon.Brain size={32}/>}
-                  </div>
-                  {/* Label */}
-                  <div style={{
-                    fontSize: 12, fontWeight: 700, color: isRead || isNext ? "var(--text)" : "var(--text-3)",
-                    textAlign: "center", marginTop: isNext ? 12 : 8, lineHeight: 1.2
-                  }}>
-                    {t.title}
-                  </div>
+              <div key={t.id} onClick={() => onNav("learn-detail", { topic: t.id })} className="card-row" style={{ cursor: "pointer" }}>
+                {iconFor(t.icon, t.color)}
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 16, fontWeight: 700 }}>{t.title}</div>
+                  <div style={{ fontSize: 12, color: "var(--text-2)", marginTop: 2 }}>{t.sub}</div>
                 </div>
+                {isRead ? (
+                  <span style={{
+                    padding: "6px 12px", borderRadius: 999, fontSize: 11, fontWeight: 700, color: "var(--green)",
+                    background: "var(--green-soft)", display: "inline-flex", alignItems: "center", gap: 4,
+                  }}>
+                    <Icon.Check size={12}/> Read
+                  </span>
+                ) : (
+                  <span style={{
+                    padding: "6px 12px", borderRadius: 999, fontSize: 11, fontWeight: 700,
+                    color: t.unreadFlag ? "var(--orange)" : "var(--text-2)",
+                    background: t.unreadFlag ? "rgba(232,98,10,0.15)" : "var(--card-3)",
+                  }}>Unread</span>
+                )}
               </div>
             );
           })}
@@ -230,116 +180,90 @@ function LearnScreen({ onNav, learnState }) {
 
 function LearnDetailScreen({ topicId, onNav, learnState, setLearnState }) {
   const topic = LEARN_TOPICS.find(t => t.id === topicId) || LEARN_TOPICS[0];
-  const [step, setStep] = useStateL(0);
-  const factsAndTip = [...topic.facts, topic.didYouKnow];
-  
-  const next = () => {
-    if (step < factsAndTip.length - 1) {
-      setStep(s => s + 1);
-    } else {
-      setLearnState(s => ({ ...s, [topic.id]: true }));
-      onNav("learn-completion", { topic: topic.id });
-    }
-  };
-  
-  const prev = () => {
-    if (step > 0) setStep(s => s - 1);
-  };
+
+  useEffect(() => {
+    setLearnState(s => ({ ...s, [topic.id]: true }));
+  }, [topic.id]);
+
+  // Tonalize 'Did You Know?' card by topic color
+  const cardBg = topic.color === "var(--green)" ? "rgba(48,185,100,0.12)"
+    : topic.color === "var(--teal)" ? "rgba(34,180,159,0.15)"
+    : topic.color === "var(--orange)" ? "rgba(232,98,10,0.12)"
+    : topic.color === "var(--yellow)" ? "rgba(249,201,48,0.15)"
+    : topic.color === "var(--red)" ? "rgba(244,91,77,0.12)"
+    : "var(--card)";
 
   return (
-    <div className="scene" style={{ background: topic.color, color: "#fff", display: "flex", flexDirection: "column" }}>
-      {/* Segmented Progress */}
-      <div style={{ display: "flex", gap: 4, padding: "14px 20px 0", paddingTop: 60, zIndex: 10 }}>
-        {factsAndTip.map((_, i) => (
-          <div key={i} style={{
-            flex: 1, height: 4, borderRadius: 2,
-            background: i <= step ? "rgba(255,255,255,0.9)" : "rgba(0,0,0,0.2)",
-            transition: "background .3s"
-          }}/>
-        ))}
-      </div>
-      
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "14px 20px", zIndex: 10 }}>
-        <div onClick={() => onNav("learn")} style={{ cursor: "pointer", background: "rgba(0,0,0,0.2)", width: 32, height: 32, borderRadius: 16, display: "grid", placeItems: "center" }}>
-          <Icon.X size={16} stroke="#fff"/>
+    <div className="scene has-dock">
+      <div style={{ padding: "14px 24px 0" }}>
+        <div className="page-back" onClick={() => onNav("learn")}>
+          <Icon.ArrowLeft size={16}/> Learn
         </div>
-        <div style={{ fontWeight: 700, fontSize: 16 }}>{topic.title}</div>
       </div>
 
-      {/* Tap Zones */}
-      <div style={{ position: "absolute", inset: 0, display: "flex", zIndex: 5 }}>
-        <div style={{ flex: 1 }} onClick={prev}/>
-        <div style={{ flex: 2 }} onClick={next}/>
-      </div>
-
-      {/* Content */}
+      {/* Hero banner */}
       <div style={{
-        flex: 1, display: "flex", flexDirection: "column", justifyContent: "center", padding: "0 32px",
-        zIndex: 2, pointerEvents: "none"
+        marginTop: 8, padding: "24px 24px 28px", background: topic.color,
+        position: "relative", overflow: "hidden",
       }}>
-        {step < topic.facts.length ? (
-          <div className="anim-up" key={step}>
-            <div style={{ fontSize: 13, fontWeight: 700, opacity: 0.8, letterSpacing: 1.5, marginBottom: 12 }}>FACT {step + 1}</div>
-            <div style={{ fontSize: 32, fontWeight: 700, lineHeight: 1.2, textWrap: "balance" }}>
-              {factsAndTip[step]}
+        <div style={{ display: "flex", gap: 14, alignItems: "flex-start" }}>
+          <div style={{
+            width: 70, height: 70, borderRadius: 16, background: "rgba(255,255,255,0.2)",
+            display: "grid", placeItems: "center", color: "#fff", flexShrink: 0,
+          }}>
+            {topic.icon === "leaf" && <Icon.Leaf size={38}/>}
+            {topic.icon === "bean" && <Icon.Bean size={38}/>}
+            {topic.icon === "carrot" && <Icon.Carrot size={38}/>}
+            {topic.icon === "apple" && <Icon.Apple size={38}/>}
+          </div>
+          <div style={{ flex: 1, paddingTop: 2 }}>
+            <div style={{ fontSize: 28, fontWeight: 700, color: "#fff", lineHeight: 1.05 }}>{topic.title}</div>
+            <div style={{ fontSize: 13, color: "rgba(255,255,255,0.92)", marginTop: 6, lineHeight: 1.4 }}>
+              {topic.description}
             </div>
           </div>
-        ) : (
-          <div className="anim-up" key="tip">
-            <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 15, fontWeight: 700, color: "var(--yellow)", marginBottom: 16 }}>
-              <Icon.Bulb size={24}/> DID YOU KNOW?
-            </div>
-            <div style={{ fontSize: 32, fontWeight: 700, lineHeight: 1.2, textWrap: "balance" }}>
-              {factsAndTip[step]}
-            </div>
-          </div>
-        )}
-      </div>
-      
-      <div style={{ padding: "0 20px 40px", textAlign: "center", fontSize: 13, opacity: 0.6, zIndex: 2 }}>
-        Tap right to continue
-      </div>
-    </div>
-  );
-}
-
-function LearnCompletionScreen({ topicId, onNav }) {
-  const topic = LEARN_TOPICS.find(t => t.id === topicId) || LEARN_TOPICS[0];
-
-  return (
-    <div className="scene" style={{ background: "var(--bg-2)", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 24, textAlign: "center" }}>
-      {/* Confetti / Celebration effect */}
-      <div className="anim-pop" style={{
-        width: 120, height: 120, borderRadius: 60, background: topic.color,
-        display: "grid", placeItems: "center", color: "#fff",
-        boxShadow: `0 0 0 20px ${topic.color}20, 0 20px 40px ${topic.color}60`,
-        marginBottom: 40
-      }}>
-        <Icon.Check size={64} strokeWidth={3}/>
-      </div>
-      
-      <div className="anim-up" style={{ animationDelay: "100ms" }}>
-        <h1 style={{ fontSize: 36, fontWeight: 800, margin: 0, lineHeight: 1.1 }}>Topic<br/>Completed!</h1>
-        <p style={{ fontSize: 16, color: "var(--text-2)", marginTop: 12 }}>
-          You've mastered <b>{topic.title}</b>.
-        </p>
-        
-        <div style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "var(--yellow-soft)", color: "var(--yellow)", padding: "10px 20px", borderRadius: 999, fontWeight: 800, fontSize: 18, marginTop: 24 }}>
-          <Icon.Sparkles size={20} fill="var(--yellow)"/> +50 XP
         </div>
       </div>
-      
-      <div className="anim-up" style={{ width: "100%", marginTop: 40, animationDelay: "200ms", display: "flex", flexDirection: "column", gap: 12 }}>
-        <button className="btn btn-primary btn-full btn-lg" onClick={() => onNav("learn")}>
-          Return to Path <Icon.ArrowRight size={18}/>
-        </button>
-        <button className="btn btn-secondary btn-full btn-lg" onClick={() => onNav("quiz")}>
-          Test your knowledge <Icon.Brain size={18}/>
-        </button>
+
+      <div style={{
+        height: 40, background: `linear-gradient(to bottom, ${topic.color} 0%, transparent 100%)`, opacity: 0.4,
+      }}/>
+
+      <div className="page-pad">
+        <div className="eyebrow">KEY FACTS</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 10 }}>
+          {topic.facts.map((f, i) => (
+            <div key={i} className="card" style={{ display: "flex", gap: 12, padding: 14 }}>
+              <span style={{
+                width: 8, height: 8, borderRadius: "50%", background: topic.color, marginTop: 8, flexShrink: 0,
+              }}/>
+              <div style={{ fontSize: 14, lineHeight: 1.45 }}>{f}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{
+          marginTop: 16, padding: 16, borderRadius: 16,
+          background: cardBg, border: `1px solid ${topic.color}`,
+        }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, fontWeight: 700, fontSize: 15, color: topic.color }}>
+            <Icon.Bulb size={18}/> Did You Know?
+          </div>
+          <div style={{ fontSize: 13, marginTop: 8, lineHeight: 1.5, color: "var(--text)" }}>
+            {topic.didYouKnow}
+          </div>
+        </div>
+
+        <div onClick={() => onNav("quiz")} className="card-row outline-purple" style={{
+          marginTop: 14, color: "var(--purple)", cursor: "pointer", background: "rgba(119,83,221,0.08)",
+        }}>
+          <Icon.Brain size={20} stroke="var(--purple)"/>
+          <span style={{ fontSize: 14, fontWeight: 700, flex: 1 }}>Test your knowledge on this topic</span>
+          <Icon.ArrowRight size={18} stroke="var(--purple)"/>
+        </div>
       </div>
     </div>
   );
 }
 
-window.LearnScreens = { LearnScreen, LearnDetailScreen, LearnCompletionScreen, LEARN_TOPICS };
+window.LearnScreens = { LearnScreen, LearnDetailScreen, LEARN_TOPICS };

@@ -121,7 +121,6 @@ function App() {
 
       {r === "learn" && <LearnScreens.LearnScreen onNav={navigate} learnState={learnState}/>}
       {r === "learn-detail" && <LearnScreens.LearnDetailScreen topicId={p.topic} onNav={navigate} learnState={learnState} setLearnState={setLearnState}/>}
-      {r === "learn-completion" && <LearnScreens.LearnCompletionScreen topicId={p.topic} onNav={navigate}/>}
 
       {r === "quiz" && <QuizScreens.QuizHubScreen onNav={navigate} quizScore={quizScore}/>}
       {r === "quiz-question" && <QuizScreens.QuizQuestionScreen qIndex={p.qIndex || 0} answers={p.answers || []} onNav={navigate} setQuizScore={setQuizScore}/>}
