@@ -83,7 +83,7 @@ function HomeScreen({ state, setState, onNav }) {
         {/* Action buttons */}
         <div style={{ display: "flex", gap: 12, marginTop: 12 }}>
           <button className="btn btn-primary" style={{ flex: 1 }} onClick={() => onNav("log")}>Log Serves +</button>
-          <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => onNav("progress")}>My Progress →</button>
+          <button className="btn btn-secondary" style={{ flex: 1 }} onClick={() => onNav("progress")}>My Activity →</button>
         </div>
 
         <button className="btn btn-teal btn-full" style={{ marginTop: 12 }} onClick={() => onNav("camera")}>

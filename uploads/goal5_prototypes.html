@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TPP09 — Goal 5: Periodic Nutrition Knowledge Check</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&display=swap');
+
+  :root {
+    --g900: #14532d;
+    --g700: #15803d;
+    --g500: #22c55e;
+    --g200: #bbf7d0;
+    --g100: #dcfce7;
+    --g50:  #f0fdf4;
+    --indigo: #3730A3;
+    --indigo-light: #6366F1;
+    --indigo-pale: #EEF2FF;
+    --violet: #7C3AED;
+    --violet-pale: #F5F3FF;
+    --violet-mid: #DDD6FE;
+    --amber: #D97706;
+    --amber-pale: #FEF3C7;
+    --amber-mid: #FDE68A;
+    --red: #DC2626;
+    --red-pale: #FEF2F2;
+    --red-mid: #FECACA;
+    --text: #111827;
+    --muted: #6B7280;
+    --white: #FFFFFF;
+    --gr50: #F9FAFB;
+    --gr100: #F3F4F6;
+    --gr200: #E5E7EB;
+    --gr300: #D1D5DB;
+    --gr500: #6B7280;
+    --gr700: #374151;
+    --phone-w: 393px;
+    --phone-h: 852px;
+    --radius: 54px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #080a10;
+    min-height: 100vh;
+    padding: 40px 20px 100px;
+    color: var(--text);
+  }
+
+  /* ===== PAGE HEADER ===== */
+  .page-header { text-align: center; margin-bottom: 60px; }
+  .page-header h1 {
+    font-family: 'Sora', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a78bfa, #818cf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+  .page-header p {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ===== PROTO SECTION ===== */
+  .proto-section { margin-bottom: 80px; }
+  .proto-label {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  .proto-desc {
+    font-size: 13px;
+    color: #9ca3af;
+    text-align: center;
+    margin-bottom: 36px;
+    max-width: 860px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.7;
+  }
+  .proto-desc strong { color: #c4b5fd; }
+  .task-tag {
+    display: inline-block;
+    background: var(--violet);
+    color: white;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .task-tag.b { background: var(--indigo); }
+
+  /* ===== WIREFLOW ===== */
+  .wireflow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    row-gap: 48px;
+  }
+
+  /* ===== PHONE ===== */
+  .phone-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .screen-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: #fff;
+    margin-bottom: 10px;
+    text-align: center;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .phone {
+    width: var(--phone-w);
+    height: var(--phone-h);
+    background: #151515;
+    border-radius: var(--radius);
+    padding: 14px;
+    box-shadow: 0 32px 80px rgba(0,0,0,.6), inset 0 0 0 1px #2a2a2a;
+    flex-shrink: 0;
+  }
+  .phone-inner {
+    width: 100%;
+    height: 100%;
+    background: var(--gr50);
+    border-radius: calc(var(--radius) - 10px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+  }
+  .dynamic-island {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    top: 12px;
+    width: 120px;
+    height: 34px;
+    background: #151515;
+    border-radius: 20px;
+    z-index: 10;
+  }
+  .status-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 24px 10px;
+    flex-shrink: 0;
+    position: relative;
+  }
+  .status-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .status-time.light { color: rgba(255,255,255,.9); }
+  .status-icons {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text);
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+  }
+  .status-icons.light { color: rgba(255,255,255,.9); }
+  .status-icons .percentage {
+    font-family: 'Fira Code', monospace;
+    font-size: 1.6em;
+    font-weight: bold;
+    letter-spacing: 0;
+    margin-left: 2px;
+  }
+  .signal-bars {
+    display: inline-block;
+    transform: scaleX(0.7);
+    transform-origin: left;
+    margin-right: -5px;
+  }
+  .screen-content { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+
+  /* ===== ARROW ===== */
+  .arrow-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 10px;
+    margin-top: 100px;
+    flex-shrink: 0;
+  }
+  .arrow-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: #a78bfa;
+    text-align: center;
+    max-width: 80px;
+    line-height: 1.4;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .arrow-label.b { color: #818cf8; }
+  .arrow-line {
+    width: 60px;
+    height: 3px;
+    background: #7c3aed;
+    position: relative;
+  }
+  .arrow-line::after {
+    content: '▶';
+    position: absolute;
+    right: -12px;
+    top: -8px;
+    color: #7c3aed;
+    font-size: 16px;
+  }
+  .arrow-line.b { background: #6366f1; }
+  .arrow-line.b::after { color: #6366f1; }
+
+  /* ===== SECTION DIVIDER ===== */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 60px 0 50px;
+  }
+  .section-divider::before, .section-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #222;
+  }
+  .section-divider span {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: #444;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  /* ===== APP BAR ===== */
+  .app-bar-violet {
+    background: linear-gradient(135deg, #4c1d95, #7c3aed);
+    color: white;
+    padding: 28px 20px 16px;
+    border-radius: 0 0 24px 24px;
+    flex-shrink: 0;
+  }
+  .app-bar-indigo {
+    background: linear-gradient(135deg, #1e1b4b, #3730a3);
+    color: white;
+    padding: 28px 20px 16px;
+    border-radius: 0 0 24px 24px;
+    flex-shrink: 0;
+  }
+  .ab-back { font-size: 11px; opacity: .6; font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+  .ab-title { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; }
+  .ab-sub { font-size: 11px; opacity: .55; font-family: 'DM Mono', monospace; margin-top: 3px; }
+
+  /* ===== QUIZ HUB ===== */
+  .quiz-due-banner {
+    margin: 14px 18px 0;
+    background: linear-gradient(135deg, #4c1d95, #7c3aed);
+    border-radius: 18px;
+    padding: 16px 18px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+  }
+  .qdb-icon { font-size: 36px; flex-shrink: 0; }
+  .qdb-title { font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 800; margin-bottom: 3px; }
+  .qdb-sub { font-size: 11px; opacity: .75; font-family: 'DM Mono', monospace; }
+  .qdb-btn { background: white; color: var(--violet); border: none; border-radius: 10px; padding: 8px 16px; font-size: 12px; font-weight: 700; cursor: pointer; margin-top: 8px; }
+
+  /* quiz stats row */
+  .quiz-stats {
+    display: flex;
+    gap: 8px;
+    margin: 12px 18px 0;
+    flex-shrink: 0;
+  }
+  .qs-card {
+    flex: 1;
+    background: white;
+    border-radius: 14px;
+    padding: 10px 12px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    text-align: center;
+  }
+  .qs-val { font-family: 'Sora', sans-serif; font-size: 22px; font-weight: 800; color: var(--violet); line-height: 1; }
+  .qs-label { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 3px; }
+
+  /* topic mini list */
+  .topic-mini {
+    margin: 12px 18px 0;
+    background: white;
+    border-radius: 16px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.06);
+    flex-shrink: 0;
+  }
+  .tm-label { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
+  .tm-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--gr100);
+  }
+  .tm-row:last-child { border-bottom: none; }
+  .tm-veg { font-size: 14px; flex-shrink: 0; }
+  .tm-name { font-size: 12px; font-weight: 600; color: var(--text); flex: 1; }
+  .tm-bar-bg { width: 60px; height: 6px; background: var(--gr200); border-radius: 6px; overflow: hidden; }
+  .tm-bar-fill { height: 100%; border-radius: 6px; }
+  .tm-pct { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 600; min-width: 34px; text-align: right; }
+
+  /* ===== QUIZ QUESTION SCREEN ===== */
+  .quiz-progress-header {
+    padding: 14px 20px 10px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--gr200);
+  }
+  .qph-dots {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .qph-dot {
+    flex: 1;
+    height: 5px;
+    border-radius: 5px;
+    background: var(--gr200);
+  }
+  .qph-dot.done { background: var(--violet); }
+  .qph-dot.active { background: #a78bfa; }
+  .qph-question {
+    font-family: 'Sora', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+  }
+  .qph-topic {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--violet);
+    margin-top: 5px;
+  }
+
+  /* options */
+  .quiz-options {
+    flex: 1;
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow: hidden;
+  }
+  .q-option {
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 2px solid var(--gr200);
+    background: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+  }
+  .q-option.selected { border-color: var(--violet); background: var(--violet-pale); }
+  .q-option.correct { border-color: #22c55e; background: var(--g50); }
+  .q-option.wrong { border-color: var(--red); background: var(--red-pale); }
+  .qo-circle {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid var(--gr300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    font-weight: 600;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .q-option.selected .qo-circle { border-color: var(--violet); background: var(--violet); color: white; }
+  .q-option.correct .qo-circle { border-color: #22c55e; background: #22c55e; color: white; }
+  .q-option.wrong .qo-circle { border-color: var(--red); background: var(--red); color: white; }
+  .qo-text { font-size: 14px; font-weight: 500; color: var(--text); }
+  .q-option.correct .qo-text { color: var(--g700); font-weight: 600; }
+  .q-option.wrong .qo-text { color: var(--red); }
+
+  /* feedback bar */
+  .quiz-feedback {
+    margin: 0 18px;
+    border-radius: 14px;
+    padding: 10px 14px;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    flex-shrink: 0;
+  }
+  .quiz-feedback.correct { background: var(--g50); border: 1.5px solid #86efac; }
+  .quiz-feedback.wrong { background: var(--red-pale); border: 1.5px solid var(--red-mid); }
+  .qf-icon { font-size: 16px; flex-shrink: 0; }
+  .qf-text { font-size: 12px; line-height: 1.5; }
+  .quiz-feedback.correct .qf-text { color: var(--g900); }
+  .quiz-feedback.wrong .qf-text { color: #7f1d1d; }
+
+  .quiz-next-btn {
+    margin: 10px 18px 14px;
+    height: 48px;
+    border-radius: 14px;
+    border: none;
+    background: #475569;
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    width: calc(100% - 36px);
+    flex-shrink: 0;
+  }
+
+  /* ===== SCORE SCREEN ===== */
+  .score-screen {
+    flex: 1;
+    background: linear-gradient(160deg, #080808, #330066, #c15a70);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 24px 20px;
+    text-align: center;
+    color: white;
+  }
+  .ss-icon { font-size: 60px; margin-bottom: 14px; }
+  .ss-score {
+    font-family: 'Sora', sans-serif;
+    font-size: 58px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .ss-label { font-size: 14px; opacity: .7; font-family: 'DM Mono', monospace; margin-bottom: 16px; }
+  .ss-breakdown {
+    background: rgba(255,255,255,.12);
+    border-radius: 16px;
+    padding: 12px 16px;
+    width: 100%;
+    margin-bottom: 12px;
+  }
+  .ssb-title { font-size: 11px; font-family: 'DM Mono', monospace; opacity: .6; text-align: left; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .ssb-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 5px 0;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+  }
+  .ssb-row:last-child { border-bottom: none; }
+  .ssb-icon { font-size: 16px; flex-shrink: 0; }
+  .ssb-q { font-size: 12px; opacity: .85; flex: 1; text-align: left; line-height: 1.3; }
+  .ssb-badge {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    padding: 2px 8px;
+    border-radius: 20px;
+    flex-shrink: 0;
+  }
+  .ssb-badge.correct { background: rgba(34,197,94,.25); color: #86efac; }
+  .ssb-badge.wrong { background: rgba(239,68,68,.25); color: #fca5a5; }
+  .ss-feedback-card {
+    background: rgba(239,68,68,.15);
+    border: 1.5px solid rgba(239,68,68,.35);
+    border-radius: 14px;
+    padding: 12px 14px;
+    width: 100%;
+    margin-bottom: 14px;
+    text-align: left;
+  }
+  .ssfc-title { font-size: 11px; font-weight: 700; color: #fca5a5; margin-bottom: 6px; font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; }
+  .ssfc-text { font-size: 12px; opacity: .85; line-height: 1.5; }
+  .ss-btn { background: white; color: var(--violet); border: none; border-radius: 14px; padding: 12px 28px; font-size: 14px; font-weight: 700; cursor: pointer; margin-bottom: 10px; }
+  .ss-link { font-size: 12px; opacity: .55; font-family: 'DM Mono', monospace; text-decoration: underline; cursor: pointer; }
+  .hi-bar { width: 130px; height: 5px; background: #1c1c1e; border-radius: 10px; opacity: .15; margin: 8px auto; flex-shrink: 0; }
+
+  /* ===== QUIZ HISTORY SCREEN ===== */
+  .history-header {
+    background: linear-gradient(135deg, #1e1b4b, #3730a3);
+    color: white;
+    padding: 28px 20px 16px;
+    border-radius: 0 0 24px 24px;
+    flex-shrink: 0;
+  }
+  .hh-title { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; }
+  .hh-sub { font-size: 11px; opacity: .55; font-family: 'DM Mono', monospace; margin-top: 3px; }
+  .hh-back { font-size: 11px; opacity: .6; font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+
+  .history-body { flex: 1; padding: 14px 18px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+  .hb-section-label { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+
+  .topic-accuracy-card {
+    background: white;
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  }
+  .tac-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gr100);
+  }
+  .tac-row:last-child { border-bottom: none; }
+  .tac-row.flagged { background: var(--red-pale); margin: 0 -4px; padding: 10px 4px; border-radius: 12px; border-bottom: none; border: 2px solid var(--red-mid); margin-bottom: 4px; }
+  .tac-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+  .tac-info { flex: 1; }
+  .tac-name { font-size: 13px; font-weight: 600; color: var(--text); }
+  .tac-detail { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; margin-top: 2px; }
+  .tac-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+  .tac-pct { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 700; }
+  .tac-bar-bg { width: 50px; height: 5px; background: var(--gr200); border-radius: 5px; overflow: hidden; }
+  .tac-bar-fill { height: 100%; border-radius: 5px; }
+  .flag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    background: var(--red-pale);
+    color: var(--red);
+    border: 1.5px solid var(--red-mid);
+    border-radius: 20px;
+    padding: 2px 8px;
+  }
+
+  .go-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 14px;
+    border: none;
+    background: var(--indigo);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  /* ===== E-TEXTBOOK SECTION ===== */
+  .textbook-header {
+    background: linear-gradient(135deg, #1e1b4b, #3730a3);
+    color: white;
+    padding: 28px 20px 18px;
+    border-radius: 0 0 24px 24px;
+    flex-shrink: 0;
+  }
+  .tbh-back { font-size: 11px; opacity: .6; font-family: 'DM Mono', monospace; margin-bottom: 4px; }
+  .tbh-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(239,68,68,.2);
+    border: 1px solid rgba(239,68,68,.4);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: #fca5a5;
+    margin-bottom: 6px;
+  }
+  .tbh-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 800; }
+  .tbh-sub { font-size: 11px; opacity: .55; font-family: 'DM Mono', monospace; margin-top: 3px; }
+
+  .textbook-body { flex: 1; padding: 14px 18px; overflow: hidden; display: flex; flex-direction: column; gap: 10px; }
+  .tb-revisit-banner {
+    background: var(--amber-pale);
+    border-radius: 14px;
+    padding: 10px 14px;
+    border: 1.5px solid var(--amber-mid);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+  .trb-icon { font-size: 16px; flex-shrink: 0; }
+  .trb-text { font-size: 12px; color: #78350f; font-weight: 500; line-height: 1.4; }
+
+  .tb-content-card {
+    background: white;
+    border-radius: 18px;
+    padding: 14px 16px;
+    box-shadow: 0 1px 6px rgba(0,0,0,.06);
+  }
+  .tbc-title { font-size: 12px; font-weight: 700; color: var(--indigo); margin-bottom: 10px; text-transform: uppercase; letter-spacing: .06em; }
+  .tbc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--gr100);
+    font-size: 12px;
+    color: var(--gr500);
+    font-family: 'DM Mono', monospace;
+  }
+  .tbc-row:last-child { border-bottom: none; }
+  .tbc-val { font-weight: 700; color: var(--indigo); }
+  .tbc-highlight {
+    background: var(--indigo-pale);
+    border-radius: 10px;
+    padding: 8px 12px;
+    margin-top: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .tbc-hl-label { font-size: 12px; color: var(--indigo); font-weight: 600; }
+  .tbc-hl-val { font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 800; color: var(--indigo); }
+
+  .take-quiz-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 14px;
+    border: none;
+    background: var(--indigo);
+    color: white;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .source-note { font-size: 10px; color: var(--muted); font-family: 'DM Mono', monospace; text-align: center; margin-top: 4px; }
+
+  /* NAV */
+  .nav {
+    display: flex;
+    justify-content: space-around;
+    padding: 12px 0 28px;
+    background: white;
+    border-top: 1px solid var(--gr200);
+    flex-shrink: 0;
+  }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; font-size: 10px; color: var(--muted); }
+  .nav-item.active { color: var(--violet); }
+  .nav-item.active-indigo { color: var(--indigo); }
+  .ni { font-size: 22px; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>🧠 Goal 5 — Periodic Nutrition Knowledge Check</h1>
+  <p>Persona: Muthu Rajkumar · TTM: Maintenance · Reinforcement Management + Stimulus Control</p>
+</div>
+
+<!-- ================================================================ -->
+<!-- TASK 5A                                                            -->
+<!-- ================================================================ -->
+<div class="proto-section">
+  <div style="text-align:center;">
+    <span class="task-tag">TASK 5A (Persona Goal) — Complete Today's Daily Knowledge Check Quiz</span>
+  </div>
+  <div class="proto-label">Daily Quiz → Active Question → Score + Feedback</div>
+  <div class="proto-desc">
+    <strong>Initial state:</strong> Today's daily knowledge check has not yet been completed.<br>
+    Muthu opens the app, sees the quiz is due, starts the 3-question check, completes it, then reads score and per-question feedback for any wrong answers.<br>
+    Wireflow: App Home → Quiz Hub → Active Question (with feedback) → Score + Review.
+  </div>
+
+  <div class="wireflow">
+
+    <!-- ===== SCREEN 0: APP HOME ===== -->
+    <div class="phone-wrap">
+      <div class="screen-label">SCREEN 0<br>App Home (starting point)</div>
+      <div class="phone">
+        <div class="phone-inner" style="background:#f9fafb;">
+          <div class="dynamic-island"></div>
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <div class="status-icons"><span class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 96</span></div>
+          </div>
+          <div class="screen-content">
+            <div style="background:linear-gradient(150deg,#14532d 0%,#15803d 100%);padding:20px 20px 24px;border-radius:0 0 28px 28px;flex-shrink:0;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;">Good evening</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-top:2px;">Muthu 🎬</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.45);font-family:'DM Mono',monospace;margin-top:2px;">Sunday, 19 April</div>
+                </div>
+                <div style="background:rgba(255,255,255,.15);border-radius:12px;padding:8px 12px;text-align:center;">
+                  <div style="font-size:20px;">🔥</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:800;color:#fff;">14 days</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.55);font-family:'DM Mono',monospace;">streak</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px;">
+                <div style="flex:1;background:rgba(255,255,255,0.14);border-radius:12px;padding:10px 12px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.55);font-family:'DM Mono',monospace;">Today</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1;">0<span style="font-size:13px;opacity:.6;">/5</span></div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:2px;">not yet logged</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.14);border-radius:12px;padding:10px 12px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.55);font-family:'DM Mono',monospace;">Yesterday</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1;">5</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:2px;">target hit ✓</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.14);border-radius:12px;padding:10px 12px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.55);font-family:'DM Mono',monospace;">Weekly avg</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1;">4.6</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:2px;">serves/day</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px;">
+              <!-- Log CTA -->
+              <div style="background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <div style="font-size:12px;font-weight:700;color:#374151;">Log today's vegetables</div>
+                  <div style="font-size:11px;color:#9ca3af;font-family:'DM Mono',monospace;">0 / 5</div>
+                </div>
+                <div style="height:8px;background:#e5e7eb;border-radius:8px;overflow:hidden;margin-bottom:10px;"><div style="width:0%;height:100%;background:linear-gradient(90deg,#22c55e,#15803d);border-radius:8px;"></div></div>
+                <div style="height:50px;background:linear-gradient(135deg,#15803d,#166534);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:700;gap:8px;">＋ Log Today's Serves</div>
+              </div>
+              </br>
+              <!-- This week mini chart -->
+              <div style="background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                  <div style="font-size:12px;font-weight:700;color:#374151;">This week</div>
+                  <div style="font-size:11px;color:#15803d;font-family:'DM Mono',monospace;font-weight:600;">5 / 6 days on target</div>
+                </div>
+                <div style="display:flex;gap:6px;align-items:flex-end;height:50px;">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#22c55e;border-radius:4px;height:40px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Mon</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#22c55e;border-radius:4px;height:40px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Tue</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--amber);border-radius:4px;height:24px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Wed</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#22c55e;border-radius:4px;height:40px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Thu</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#22c55e;border-radius:4px;height:40px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Fri</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--amber);border-radius:4px;height:32px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Sat</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#e5e7eb;border-radius:4px;height:8px;border:2px dashed #9ca3af;"></div><div style="font-size:9px;color:#15803d;font-family:'DM Mono',monospace;font-weight:700;">Sun</div></div>
+                </div>
+              </div>
+              <!-- Quiz due card — ENTRY POINT -->
+              </br>
+              <div style="background:linear-gradient(135deg,#4c1d95,#7c3aed);border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+                <div style="width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">🧠</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:700;color:#fff;">Daily knowledge check due</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.65);font-family:'DM Mono',monospace;margin-top:2px;">3 questions · ~60 seconds</div>
+                </div>
+                <div style="font-size:16px;color:rgba(255,255,255,.8);font-weight:700;">→</div>
+              </div>
+              <!-- Quick links -->
+              <!-- <div style="display:flex;gap:8px;">
+                <div style="flex:1;background:#f0fdf4;border-radius:14px;padding:12px;border:1px solid #86efac;text-align:center;"><div style="font-size:20px;margin-bottom:4px;">📖</div><div style="font-size:11px;font-weight:700;color:#15803d;">Serve Sizes</div><div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:2px;">Look up foods</div></div>
+                <div style="flex:1;background:#fef3c7;border-radius:14px;padding:12px;border:1px solid #fde68a;text-align:center;"><div style="font-size:20px;margin-bottom:4px;">📊</div><div style="font-size:11px;font-weight:700;color:#92400e;">My Progress</div><div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:2px;">History &amp; trends</div></div>
+                <div style="flex:1;background:#f5f3ff;border-radius:14px;padding:12px;border:1px solid #ddd6fe;text-align:center;"><div style="font-size:20px;margin-bottom:4px;">🧠</div><div style="font-size:11px;font-weight:700;color:#4c1d95;">Knowledge</div><div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:2px;">Weekly quiz</div></div>
+              </div> -->
+            </div>
+            <div class="nav">
+              <div class="nav-item active" style="color:var(--violet);"><span class="ni">🏠</span>Home</div>
+              <div class="nav-item"><span class="ni">🥦</span>Log</div>
+              <div class="nav-item"><span class="ni">📊</span>Progress</div>
+              <div class="nav-item"><span class="ni">📚</span>Learn</div>
+              <div class="nav-item"><span class="ni">🧠</span>Quiz</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-label">Tap "Daily knowledge check"</div>
+      <div class="arrow-line"></div>
+    </div>
+
+    <!-- ===== SCREEN 1: QUIZ HUB ===== -->
+    <div class="phone-wrap">
+      <div class="screen-label">SCREEN 1<br>Quiz Hub — today's check</div>
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="dynamic-island"></div>
+          <div class="status-bar">
+            <span class="status-time">9:42</span>
+            <div class="status-icons"><span class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 96</span></div>
+          </div>
+          <div class="screen-content">
+            <div class="app-bar-violet">
+              <div class="ab-back">← Home</div>
+              <div class="ab-title">Daily Knowledge Check</div>
+              <div class="ab-sub">Sunday, 19 April · Not yet completed</div>
+            </div>
+            <div class="quiz-due-banner">
+              <div class="qdb-icon">🧠</div>
+              <div>
+                <div class="qdb-title">Today's Check</div>
+                <div class="qdb-sub">3 questions · ~60 seconds<br>Last completed: yesterday (3/3)</div>
+                <button class="qdb-btn">Start Quiz →</button>
+              </div>
+            </div>
+            <div class="quiz-stats">
+              <div class="qs-card">
+                <div class="qs-val">6</div>
+                <div class="qs-label">week streak</div>
+              </div>
+              <div class="qs-card">
+                <div class="qs-val">86%</div>
+                <div class="qs-label">avg accuracy</div>
+              </div>
+              <div class="qs-card">
+                <div class="qs-val">28</div>
+                <div class="qs-label">checks done</div>
+              </div>
+            </div>
+            <div class="topic-mini">
+              <div class="tm-label">Recent accuracy by topic</div>
+              <div class="tm-row">
+                <span class="tm-veg">🥬</span>
+                <span class="tm-name">Leafy Greens</span>
+                <div class="tm-bar-bg"><div class="tm-bar-fill" style="width:100%;background:#22c55e;"></div></div>
+                <span class="tm-pct" style="color:#15803d;">100%</span>
+              </div>
+              <div class="tm-row">
+                <span class="tm-veg">🥦</span>
+                <span class="tm-name">Cruciferous Veg</span>
+                <div class="tm-bar-bg"><div class="tm-bar-fill" style="width:67%;background:#d97706;"></div></div>
+                <span class="tm-pct" style="color:#d97706;">67%</span>
+              </div>
+              <div class="tm-row">
+                <span class="tm-veg">🥔</span>
+                <span class="tm-name">Starchy Vegetables</span>
+                <div class="tm-bar-bg"><div class="tm-bar-fill" style="width:50%;background:#ef4444;"></div></div>
+                <span class="tm-pct" style="color:#ef4444;">50%</span>
+              </div>
+            </div>
+            <div style="flex:1;"></div>
+            <div class="nav">
+              <div class="nav-item"><span class="ni">🏠</span>Home</div>
+              <div class="nav-item"><span class="ni">🥦</span>Log</div>
+              <div class="nav-item"><span class="ni">📊</span>Progress</div>
+              <div class="nav-item"><span class="ni">📚</span>Learn</div>
+              <div class="nav-item active" style="color:var(--violet);"><span class="ni">🧠</span>Quiz</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-label">Tap "Start Quiz →"</div>
+      <div class="arrow-line"></div>
+    </div>
+
+    <!-- ===== SCREEN 2: ACTIVE QUESTION (with wrong answer + feedback shown) ===== -->
+    <div class="phone-wrap">
+      <div class="screen-label">SCREEN 2<br>Question 2 — answered wrong + feedback</div>
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="dynamic-island"></div>
+          <div class="status-bar">
+            <span class="status-time">9:43</span>
+            <div class="status-icons"><span class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 96</span></div>
+          </div>
+          <div class="screen-content">
+            <div class="quiz-progress-header">
+              <div class="qph-dots">
+                <div class="qph-dot done"></div>
+                <div class="qph-dot active"></div>
+                <div class="qph-dot"></div>
+              </div>
+              <div class="qph-question">How many serves is ½ cup of cooked potato?</div>
+              <div class="qph-topic">🥔 Starchy Vegetables · Question 2 of 3</div>
+            </div>
+            <div class="quiz-options">
+              <div class="q-option wrong">
+                <div class="qo-circle">✗</div>
+                <div class="qo-text">½ serve</div>
+              </div>
+              <div class="q-option correct">
+                <div class="qo-circle">✓</div>
+                <div class="qo-text">1 serve</div>
+              </div>
+              <div class="q-option">
+                <div class="qo-circle">C</div>
+                <div class="qo-text">2 serves</div>
+              </div>
+              <button class="quiz-next-btn">Next Question →</button>
+            </div>
+            <div class="quiz-feedback wrong">
+              <span class="qf-icon">❌</span>
+              <div class="qf-text"><strong>Not quite.</strong> ½ cup of cooked starchy vegetables like potato or sweet potato = <strong>1 serve</strong>, the same rule as other cooked vegetables. The ½ cup cooked = 1 serve rule applies broadly.</div>
+            </div>
+            </br>
+            </br>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-label">Completes all 3 questions</div>
+      <div class="arrow-line"></div>
+    </div>
+
+    <!-- ===== SCREEN 3: SCORE + FEEDBACK ===== -->
+    <div class="phone-wrap">
+      <div class="screen-label">SCREEN 3<br>Score — 2/3 with per-question breakdown</div>
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="dynamic-island"></div>
+          <div class="status-bar">
+            <span class="status-time" style="color:rgba(255,255,255,.9);">9:44</span>
+            <div class="status-icons light"><span class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 96</span></div>
+          </div>
+          <div class="screen-content">
+            <div class="score-screen">
+              <div class="ss-icon">🎯</div>
+              <div class="ss-score">2 / 3</div>
+              <div class="ss-label">Today's score · Starchy Vegetables</div>
+              <div class="ss-breakdown">
+                <div class="ssb-title">Question breakdown</div>
+                <div class="ssb-row">
+                  <span class="ssb-icon">✅</span>
+                  <span class="ssb-q">How many serves is 1 cup raw spinach?</span>
+                  <span class="ssb-badge correct">Correct</span>
+                </div>
+                <div class="ssb-row">
+                  <span class="ssb-icon">❌</span>
+                  <span class="ssb-q">How many serves is ½ cup cooked potato?</span>
+                  <span class="ssb-badge wrong">Wrong</span>
+                </div>
+                <div class="ssb-row">
+                  <span class="ssb-icon">✅</span>
+                  <span class="ssb-q">Does ½ cup cooked broccoli = 1 serve?</span>
+                  <span class="ssb-badge correct">Correct</span>
+                </div>
+              </div>
+              <div class="ss-feedback-card">
+                <div class="ssfc-title">📚 Review recommended</div>
+                <div class="ssfc-text">You answered the starchy vegetable question incorrectly. ½ cup cooked starchy veg = 1 serve. Tap below to review the Starchy Vegetables section and improve your next quiz.</div>
+              </div>
+              <button class="ss-btn">Review Starchy Vegetables →</button>
+              <div class="ss-link">Skip review · Back to home</div>
+            </div>
+            <div class="hi-bar"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section-divider"><span>task 5b</span></div>
+
+<!-- ================================================================ -->
+<!-- TASK 5B                                                            -->
+<!-- ================================================================ -->
+<div class="proto-section">
+  <div style="text-align:center;">
+    <span class="task-tag b">TASK 5B (Persona Goal) — Find Lowest-Accuracy Topic → Navigate to E-Textbook</span>
+  </div>
+  <div class="proto-label">Quiz History → Lowest Topic Identified → E-Textbook Review</div>
+  <div class="proto-desc">
+    <strong>Initial state:</strong> At least 3 knowledge check quizzes completed across the past month.<br>
+    Muthu suspects one topic keeps tripping him up. He navigates to quiz performance history, identifies the topic with the lowest 4-week accuracy, then taps through directly to that topic's e-textbook section to re-read it.<br>
+    Wireflow: App Home → Quiz Performance History → Lowest topic identified → E-Textbook Section.
+  </div>
+
+  <div class="wireflow">
+
+    <!-- ===== SCREEN 0: APP HOME ===== -->
+    <div class="phone-wrap">
+      <div class="screen-label">SCREEN 0<br>App Home (starting point)</div>
+      <div class="phone">
+        <div class="phone-inner" style="background:#f9fafb;">
+          <div class="dynamic-island"></div>
+          <div class="status-bar">
+            <span class="status-time">9:41</span>
+            <div class="status-icons"><span class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 96</span></div>
+          </div>
+          <div class="screen-content">
+            <div style="background:linear-gradient(150deg,#14532d 0%,#15803d 100%);padding:20px 20px 24px;border-radius:0 0 28px 28px;flex-shrink:0;">
+              <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+                <div>
+                  <div style="font-size:11px;color:rgba(255,255,255,0.55);letter-spacing:.1em;text-transform:uppercase;font-family:'DM Mono',monospace;">Good evening</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:22px;font-weight:800;color:#fff;margin-top:2px;">Muthu 🎬</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.45);font-family:'DM Mono',monospace;margin-top:2px;">Sunday, 19 April</div>
+                </div>
+                <div style="background:rgba(255,255,255,.15);border-radius:12px;padding:8px 12px;text-align:center;">
+                  <div style="font-size:20px;">🔥</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:16px;font-weight:800;color:#fff;">14 days</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.55);font-family:'DM Mono',monospace;">streak</div>
+                </div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:14px;">
+                <div style="flex:1;background:rgba(255,255,255,0.14);border-radius:12px;padding:10px 12px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.55);font-family:'DM Mono',monospace;">Today</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1;">0<span style="font-size:13px;opacity:.6;">/5</span></div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:2px;">not yet logged</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.14);border-radius:12px;padding:10px 12px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.55);font-family:'DM Mono',monospace;">Yesterday</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1;">5</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:2px;">target hit ✓</div>
+                </div>
+                <div style="flex:1;background:rgba(255,255,255,0.14);border-radius:12px;padding:10px 12px;">
+                  <div style="font-size:10px;color:rgba(255,255,255,0.55);font-family:'DM Mono',monospace;">Weekly avg</div>
+                  <div style="font-family:'Sora',sans-serif;font-size:24px;font-weight:800;color:#fff;line-height:1;">4.6</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.4);font-family:'DM Mono',monospace;margin-top:2px;">serves/day</div>
+                </div>
+              </div>
+            </div>
+            <div style="flex:1;overflow-y:auto;padding:16px 16px 8px;display:flex;flex-direction:column;gap:10px;">
+              <!-- Log CTA -->
+              <div style="background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                  <div style="font-size:12px;font-weight:700;color:#374151;">Log today's vegetables</div>
+                  <div style="font-size:11px;color:#9ca3af;font-family:'DM Mono',monospace;">0 / 5</div>
+                </div>
+                <div style="height:8px;background:#e5e7eb;border-radius:8px;overflow:hidden;margin-bottom:10px;"><div style="width:0%;height:100%;background:linear-gradient(90deg,#22c55e,#15803d);border-radius:8px;"></div></div>
+                <div style="height:50px;background:linear-gradient(135deg,#15803d,#166534);border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:700;gap:8px;">＋ Log Today's Serves</div>
+              </div>
+              <!-- This week mini chart -->
+              <div style="background:#fff;border-radius:18px;padding:14px 16px;box-shadow:0 1px 5px rgba(0,0,0,.06);">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                  <div style="font-size:12px;font-weight:700;color:#374151;">This week</div>
+                  <div style="font-size:11px;color:#15803d;font-family:'DM Mono',monospace;font-weight:600;">5 / 6 days on target</div>
+                </div>
+                <div style="display:flex;gap:6px;align-items:flex-end;height:50px;">
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#22c55e;border-radius:4px;height:40px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Mon</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#22c55e;border-radius:4px;height:40px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Tue</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--amber);border-radius:4px;height:24px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Wed</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#22c55e;border-radius:4px;height:40px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Thu</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#22c55e;border-radius:4px;height:40px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Fri</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:var(--amber);border-radius:4px;height:32px;"></div><div style="font-size:9px;color:#9ca3af;font-family:'DM Mono',monospace;">Sat</div></div>
+                  <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;"><div style="width:100%;background:#e5e7eb;border-radius:4px;height:8px;border:2px dashed #9ca3af;"></div><div style="font-size:9px;color:#15803d;font-family:'DM Mono',monospace;font-weight:700;">Sun</div></div>
+                </div>
+              </div>
+              <!-- Quick links -->
+              <div style="display:flex;gap:8px;">
+                <div style="flex:1;background:#f0fdf4;border-radius:14px;padding:12px;border:1px solid #86efac;text-align:center;"><div style="font-size:20px;margin-bottom:4px;">📖</div><div style="font-size:11px;font-weight:700;color:#15803d;">Serve Sizes</div><div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:2px;">Look up foods</div></div>
+                <div style="flex:1;background:#fef3c7;border-radius:14px;padding:12px;border:1px solid #fde68a;text-align:center;"><div style="font-size:20px;margin-bottom:4px;">📊</div><div style="font-size:11px;font-weight:700;color:#92400e;">My Progress</div><div style="font-size:10px;color:#6b7280;font-family:'DM Mono',monospace;margin-top:2px;">History &amp; trends</div></div>
+                <!-- ENTRY POINT for 5B -->
+                <div style="flex:1;background:linear-gradient(135deg,#1e1b4b,#3730a3);border-radius:14px;padding:12px;text-align:center;"><div style="font-size:20px;margin-bottom:4px;">🧠</div><div style="font-size:11px;font-weight:700;color:#fff;">Knowledge</div><div style="font-size:10px;color:rgba(255,255,255,.65);font-family:'DM Mono',monospace;margin-top:2px;">Quiz history →</div></div>
+              </div>
+            </div>
+            <div class="nav">
+              <div class="nav-item" style="color:var(--violet);"><span class="ni">🏠</span>Home</div>
+              <div class="nav-item"><span class="ni">🥦</span>Log</div>
+              <div class="nav-item"><span class="ni">📊</span>Progress</div>
+              <div class="nav-item"><span class="ni">📚</span>Learn</div>
+              <div class="nav-item active-indigo"><span class="ni">🧠</span>Quiz</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-label b">Tap "Knowledge — Quiz history →"</div>
+      <div class="arrow-line b"></div>
+    </div>
+
+    <!-- ===== SCREEN 1: QUIZ PERFORMANCE HISTORY ===== -->
+    <div class="phone-wrap">
+      <div class="screen-label">SCREEN 1<br>Quiz Performance History — 4-week accuracy</div>
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="dynamic-island"></div>
+          <div class="status-bar">
+            <span class="status-time">9:42</span>
+            <div class="status-icons"><span class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 96</span></div>
+          </div>
+          <div class="screen-content">
+            <div class="history-header">
+              <div class="hh-back">← Home</div>
+              <div class="hh-title">Quiz Performance</div>
+              <div class="hh-sub">Last 4 weeks · 28 checks completed</div>
+            </div>
+            <div class="history-body">
+              <div class="hb-section-label">Accuracy by topic — 4 week average</div>
+              <div class="topic-accuracy-card">
+
+                <!-- Leafy Greens — 100% -->
+                <div class="tac-row">
+                  <span class="tac-icon">🥬</span>
+                  <div class="tac-info">
+                    <div class="tac-name">Leafy Greens</div>
+                    <div class="tac-detail">✅ ✅ ✅ ✅ — 4 weeks</div>
+                  </div>
+                  <div class="tac-right">
+                    <span class="tac-pct" style="color:#15803d;">100%</span>
+                    <div class="tac-bar-bg"><div class="tac-bar-fill" style="width:100%;background:#22c55e;"></div></div>
+                  </div>
+                </div>
+
+                <!-- Legumes — 83% -->
+                <div class="tac-row">
+                  <span class="tac-icon">🫘</span>
+                  <div class="tac-info">
+                    <div class="tac-name">Legumes & Beans</div>
+                    <div class="tac-detail">✅ ✅ ✅ ⚠️ — 4 weeks</div>
+                  </div>
+                  <div class="tac-right">
+                    <span class="tac-pct" style="color:#15803d;">83%</span>
+                    <div class="tac-bar-bg"><div class="tac-bar-fill" style="width:83%;background:#22c55e;"></div></div>
+                  </div>
+                </div>
+
+                <!-- Cruciferous — 67% -->
+                <div class="tac-row">
+                  <span class="tac-icon">🥦</span>
+                  <div class="tac-info">
+                    <div class="tac-name">Cruciferous Veg</div>
+                    <div class="tac-detail">✅ ⚠️ ✅ ⚠️ — 4 weeks</div>
+                  </div>
+                  <div class="tac-right">
+                    <span class="tac-pct" style="color:#d97706;">67%</span>
+                    <div class="tac-bar-bg"><div class="tac-bar-fill" style="width:67%;background:#d97706;"></div></div>
+                  </div>
+                </div>
+
+                <!-- Root Veg — 67% -->
+                <div class="tac-row">
+                  <span class="tac-icon">🥕</span>
+                  <div class="tac-info">
+                    <div class="tac-name">Root Vegetables</div>
+                    <div class="tac-detail">✅ ⚠️ ⚠️ ✅ — 4 weeks</div>
+                  </div>
+                  <div class="tac-right">
+                    <span class="tac-pct" style="color:#d97706;">67%</span>
+                    <div class="tac-bar-bg"><div class="tac-bar-fill" style="width:67%;background:#d97706;"></div></div>
+                  </div>
+                </div>
+
+                <!-- STARCHY — 42% — LOWEST — flagged -->
+                <div class="tac-row flagged">
+                  <span class="tac-icon">🥔</span>
+                  <div class="tac-info">
+                    <div class="tac-name" style="color:var(--red);">Starchy Vegetables</div>
+                    <div class="tac-detail" style="color:var(--red);opacity:.7;">⚠️ ⚠️ ⚠️ ⚠️ — 4 weeks</div>
+                    <span class="flag-badge" style="margin-top:4px;display:inline-flex;">⬇️ Lowest accuracy</span>
+                  </div>
+                  <div class="tac-right">
+                    <span class="tac-pct" style="color:var(--red);">42%</span>
+                    <div class="tac-bar-bg"><div class="tac-bar-fill" style="width:42%;background:var(--red);"></div></div>
+                  </div>
+                </div>
+
+              </div>
+              <button class="go-btn">📚 Go to Starchy Vegetables in e-textbook →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow-wrap">
+      <div class="arrow-label b">Tap "Go to Starchy Vegetables"</div>
+      <div class="arrow-line b"></div>
+    </div>
+
+    <!-- ===== SCREEN 2: E-TEXTBOOK SECTION ===== -->
+    <div class="phone-wrap">
+      <div class="screen-label">SCREEN 2<br>E-Textbook — Starchy Vegetables (to review)</div>
+      <div class="phone">
+        <div class="phone-inner">
+          <div class="dynamic-island"></div>
+          <div class="status-bar">
+            <span class="status-time">9:43</span>
+            <div class="status-icons"><span class="signal-bars">▃▄▅▆</span>5G<span class="percentage"> 96</span></div>
+          </div>
+          <div class="screen-content">
+            <div class="textbook-header">
+              <div class="tbh-back">← Quiz Performance</div>
+              <span class="tbh-tag">⚠️ Lowest accuracy — 42% over 4 weeks</span>
+              <div class="tbh-title">Starchy Vegetables</div>
+              <div class="tbh-sub">eatforhealth.gov.au · Serve sizes guide</div>
+            </div>
+            <div class="textbook-body">
+              <div class="tb-revisit-banner">
+                <span class="trb-icon">📌</span>
+                <span class="trb-text">You've been getting starchy vegetable questions wrong consistently. Re-reading this section will help improve your next quiz score.</span>
+              </div>
+              <div class="tb-content-card">
+                <div class="tbc-title">🥔 What counts as 1 serve?</div>
+                <div class="tbc-row"><span>Potato (cooked)</span><span class="tbc-val">½ cup = 1 serve</span></div>
+                <div class="tbc-row"><span>Sweet potato (cooked)</span><span class="tbc-val">½ cup = 1 serve</span></div>
+                <div class="tbc-row"><span>Corn (whole kernel)</span><span class="tbc-val">½ cup = 1 serve</span></div>
+                <div class="tbc-row"><span>Taro / Yam (cooked)</span><span class="tbc-val">½ cup = 1 serve</span></div>
+                <div class="tbc-row"><span>Weight per serve ~</span><span class="tbc-val">75g</span></div>
+                <div class="tbc-highlight">
+                  <span class="tbc-hl-label">Key rule: ½ cup cooked = 1 serve</span>
+                  <span class="tbc-hl-val">always</span>
+                </div>
+              </div>
+              <div class="source-note">Source: eatforhealth.gov.au/food-essentials/serve-sizes</div>
+              <button class="take-quiz-btn">🧠 Test yourself on this topic →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="text-align:center;margin-top:60px;font-family:'DM Mono',monospace;font-size:11px;color:#333;">
+  TPP09 · Goal 5 Prototypes · COMP5427 Usability Engineering<br>
+  Persona: Muthu Rajkumar · TTM: Maintenance · eatforhealth.gov.au
+</div>
+
+</body>
+</html>

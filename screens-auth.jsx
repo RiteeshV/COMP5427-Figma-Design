@@ -3,18 +3,75 @@ const { useState: useStateA, useEffect: useEffectA } = React;
 
 function LoginScreen({ onNav, theme }) {
   const [email, setEmail] = useStateA("muthu@veggietrack.app");
-  const [faceLoading, setFaceLoading] = useStateA(false);
+  // Phases: idle → expand (scanning) → success (shrunken pill) → idle
+  const [facePhase, setFacePhase] = useStateA("idle");
+  const faceActive = facePhase !== "idle";
 
   const handleFaceId = () => {
-    setFaceLoading(true);
-    setTimeout(() => {
-      setFaceLoading(false);
-      onNav("home");
-    }, 1200);
+    if (faceActive) return;
+    setFacePhase("expand");
+    setTimeout(() => setFacePhase("success"), 1500);
+    setTimeout(() => { setFacePhase("idle"); onNav("home"); }, 2400);
   };
+
+  const islandSize = facePhase === "expand"
+    ? { width: 280, height: 76, borderRadius: 38, top: 12 }
+    : facePhase === "success"
+      ? { width: 190, height: 50, borderRadius: 25, top: 12 }
+      : { width: 120, height: 34, borderRadius: 17, top: 12 };
 
   return (
     <div className="scene" style={{ position: "relative" }}>
+      {/* Face ID overlay — morphs out of the Dynamic Island, scans, then shrinks */}
+      {faceActive && (
+        <div style={{
+          position: "absolute", left: "50%",
+          transform: "translateX(-50%)", zIndex: 50,
+          background: "#000",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 14,
+          padding: "0 18px", overflow: "hidden",
+          boxShadow: "0 12px 32px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05)",
+          transition: "width .5s cubic-bezier(.34,1.56,.64,1), height .5s cubic-bezier(.34,1.56,.64,1), border-radius .5s cubic-bezier(.34,1.56,.64,1), top .5s cubic-bezier(.34,1.56,.64,1)",
+          animation: "fidFromIsland .35s ease-out",
+          ...islandSize,
+        }}>
+          {facePhase === "expand" && (
+            <React.Fragment>
+              <div style={{
+                width: 48, height: 48, position: "relative",
+                display: "grid", placeItems: "center", flexShrink: 0,
+              }}>
+                <div style={{
+                  position: "absolute", inset: -4, borderRadius: "50%",
+                  border: "2px solid var(--green)",
+                  animation: "fidPulse 1.2s ease-out infinite",
+                }}/>
+                <Icon.Face size={40} stroke="#fff" strokeWidth={1.9}/>
+              </div>
+              <div style={{ lineHeight: 1.25 }}>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#fff" }}>Face ID</div>
+                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.7)", fontFamily: "'DM Mono', monospace", marginTop: 2 }}>Scanning…</div>
+              </div>
+            </React.Fragment>
+          )}
+          {facePhase === "success" && (
+            <React.Fragment>
+              <div className="anim-pop" style={{
+                width: 30, height: 30, borderRadius: "50%",
+                background: "var(--green)",
+                display: "grid", placeItems: "center", flexShrink: 0,
+                boxShadow: "0 0 0 4px rgba(48,185,100,0.25)",
+              }}>
+                <Icon.Check size={18} stroke="#fff" strokeWidth={3.5}/>
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: "#fff", letterSpacing: 0.2 }}>
+                Authenticated
+              </div>
+            </React.Fragment>
+          )}
+        </div>
+      )}
+
       {/* Decorative blob */}
       <div style={{
         position: "absolute", right: -60, bottom: 80, width: 280, height: 280, borderRadius: "50%",
@@ -119,11 +176,11 @@ function LoginScreen({ onNav, theme }) {
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 700, fontSize: 16 }}>Face ID</div>
               <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 2 }}>
-                {faceLoading ? "Authenticating…" : "Tap to authenticate"}
+                {faceActive ? "Authenticating…" : "Tap to authenticate"}
               </div>
               <div style={{ fontSize: 10, color: "var(--teal)", marginTop: 4, display: "flex", alignItems: "center", gap: 5 }}>
                 <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--teal)", display: "inline-block" }}/>
-                {faceLoading ? "Scanning…" : "Ready"}
+                {faceActive ? "Scanning…" : "Ready"}
               </div>
             </div>
             <Icon.ArrowRight size={20} stroke="var(--green)"/>

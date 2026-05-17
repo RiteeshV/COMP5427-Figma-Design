@@ -6,7 +6,7 @@ const { useState, useEffect, useRef, useMemo, useCallback } = React;
 function StatusBar() {
   return (
     <div className="status-bar">
-      <span className="sb-time">9:41</span>
+      <span className="sb-time">5:55</span>
       <div className="sb-right">
         <svg className="sb-icon sb-cell" viewBox="0 0 18 12" width="18" height="11" fill="currentColor">
           <rect x="0"  y="8" width="3" height="4" rx="0.7"/>
@@ -53,7 +53,7 @@ function Dock({ active, onNav }) {
   const items = [
     { key: "home", label: "Home", icon: <Icon.Home/> },
     { key: "log", label: "Log", icon: <Icon.Plus strokeWidth={2.5}/> },
-    { key: "progress", label: "Progress", icon: <Icon.Diamond/> },
+    { key: "progress", label: "Activity", icon: <Icon.Diamond/> },
     { key: "learn", label: "Learn", icon: <Icon.Square/> },
     { key: "quiz", label: "Quiz", icon: <Icon.Target/> },
   ];

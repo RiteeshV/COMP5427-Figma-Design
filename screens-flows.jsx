@@ -3,68 +3,212 @@
 const { useState: useStateP, useRef: useRefP, useEffect: useEffectP } = React;
 
 // ───── My Progress ─────
-function ProgressScreen({ state, onNav }) {
+// Progress is a *trends + history* screen. It deliberately does NOT
+// duplicate the amount-input flow from Log Serves — that screen owns
+// "log a new serve". Progress owns "look back & correct". Today's count
+// is shown compactly with the SAME Edit pill pattern from Log Serves,
+// so the user has two consistent entry points for corrections.
+function ProgressScreen({ state, setState, onNav }) {
   const { count, target, streak, weekDays } = state;
   const pct = Math.round((count / target) * 100);
   const daysHit = weekDays.filter(d => d.hit).length;
-  const bestDay = weekDays.reduce((b, d) => (d.hit && (!b || d.serves > b.serves) ? d : b), null);
   const remaining = Math.max(0, target - count);
+  const todayLabel = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" });
+
+  // Mount flag drives all the entry animations
+  const [mounted, setMounted] = useStateP(false);
+  useEffectP(() => {
+    const t = setTimeout(() => setMounted(true), 60);
+    return () => clearTimeout(t);
+  }, []);
+
+  // Synthesize per-day serve counts so the weekly bars are meaningful.
+  // The last entry is "today" and reads from live state.
+  const dailyServes = [5, 5, 3, 5, 2, 4]; // Mon..Sat mock
+  const dayData = weekDays.map((d, i) => {
+    const isToday = i === weekDays.length - 1;
+    return {
+      ...d,
+      serves: isToday ? count : (dailyServes[i] ?? (d.hit ? 5 : 2)),
+      isToday,
+    };
+  });
+  const total = dayData.reduce((s, d) => s + d.serves, 0);
+  const avg = (total / 7).toFixed(1);
 
   return (
     <div className="scene has-dock">
-      <BackHeader onNav={onNav} to="home" label="Home" title="My Progress"/>
+      <BackHeader onNav={onNav} to="home" label="Home" title="Activity"/>
       <div className="page-pad">
 
-        {/* Ring card */}
-        <div className="card" style={{ marginTop: 14, display: "flex", flexDirection: "column", alignItems: "center", padding: 22 }}>
-          <UI.Ring value={pct} max={100} size={200} stroke={16}>
-            <div style={{ fontSize: 38, fontWeight: 700, color: "var(--green)", lineHeight: 1 }}>{pct}%</div>
-            <div style={{ fontSize: 12, color: "var(--text-2)", marginTop: 4 }}>of target</div>
-          </UI.Ring>
-          <div style={{ fontSize: 17, fontWeight: 700, marginTop: 16 }}>
-            {count} / {target} serves today
+        {/* TODAY CARD — mirrors Log Serves hero pattern, includes Edit pill */}
+        <div className="anim-up" style={{
+          marginTop: 14, padding: "16px 18px", borderRadius: 20,
+          background: "var(--green)", color: "#fff", position: "relative", overflow: "hidden",
+          boxShadow: "0 8px 24px rgba(48,185,100,0.22)",
+          animationDelay: "0ms",
+        }}>
+          {/* Decorative blob */}
+          <div style={{
+            position: "absolute", right: -50, top: -50, width: 160, height: 160, borderRadius: "50%",
+            background: "rgba(255,255,255,0.07)", pointerEvents: "none",
+          }}/>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
+            <div>
+              <div className="eyebrow" style={{ color: "#fff", opacity: 0.85 }}>TODAY · {todayLabel}</div>
+              <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 6 }}>
+                <span style={{ fontSize: 40, fontWeight: 800, lineHeight: 1, letterSpacing: -1.5 }}>{count}</span>
+                <span style={{ fontSize: 18, opacity: 0.7, fontWeight: 500 }}>/ {target} serves</span>
+              </div>
+            </div>
+            <button onClick={() => onNav("edit-log")} style={{
+              display: "flex", alignItems: "center", gap: 6,
+              background: "rgba(255,255,255,0.2)", border: "1px solid rgba(255,255,255,0.32)",
+              color: "#fff", fontWeight: 600, fontSize: 12,
+              padding: "7px 13px", borderRadius: 999, cursor: "pointer",
+              backdropFilter: "blur(6px)",
+            }}>
+              <Icon.Pencil size={13} strokeWidth={2.2}/> Edit
+            </button>
           </div>
-          {remaining > 0
-            ? <div style={{ fontSize: 13, color: "var(--orange)", marginTop: 6 }}>{remaining} more before midnight</div>
-            : <div style={{ fontSize: 13, color: "var(--green)", marginTop: 6 }}>🎉 Goal hit — log more if you can!</div>
-          }
+          {/* Progress bar — animated fill */}
+          <div style={{ marginTop: 14, position: "relative" }}>
+            <div style={{ height: 6, borderRadius: 999, background: "rgba(255,255,255,0.22)", overflow: "hidden" }}>
+              <div style={{
+                height: "100%",
+                width: mounted ? `${Math.min(100, pct)}%` : "0%",
+                background: "#fff", borderRadius: 999,
+                transition: "width .9s cubic-bezier(.2,.7,.3,1) .25s",
+              }}/>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8, fontSize: 11, opacity: 0.9 }}>
+              <span style={{ fontWeight: 700 }}>{pct}% of target</span>
+              <span>{remaining > 0 ? `${remaining} more before midnight` : "🎉 Goal hit!"}</span>
+            </div>
+          </div>
         </div>
 
-        {/* Mini stats */}
-        <div style={{ display: "flex", gap: 12, marginTop: 14 }}>
-          <div className="card" style={{ flex: 1, padding: 14, cursor: "pointer" }} onClick={() => onNav("calendar")}>
-            <Icon.Cal size={20} stroke="var(--teal)"/>
-            <div style={{ fontSize: 26, fontWeight: 700, marginTop: 6, color: "var(--teal)" }}>{daysHit}/7</div>
-            <div style={{ fontSize: 11, color: "var(--text-2)" }}>days this week</div>
+        {/* THIS WEEK — bar chart with tap-to-edit */}
+        <div className="anim-up" style={{ marginTop: 18, animationDelay: "100ms" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 10 }}>
+            <div className="eyebrow">THIS WEEK</div>
+            <div style={{ fontSize: 10, color: "var(--text-2)", fontFamily: "'DM Mono', monospace", opacity: 0.7 }}>
+              TAP A DAY TO EDIT
+            </div>
           </div>
-          <div className="card" style={{ flex: 1, padding: 14, cursor: "pointer" }} onClick={() => onNav("calendar")}>
-            <Icon.Flame size={20} stroke="var(--yellow)" fill="var(--yellow)"/>
-            <div style={{ fontSize: 26, fontWeight: 700, marginTop: 6, color: "var(--yellow)" }}>{bestDay?.day || "—"}</div>
-            <div style={{ fontSize: 11, color: "var(--text-2)" }}>best day</div>
+          <div className="card" style={{ padding: "14px 10px" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
+              {dayData.map((d, i) => {
+                const dayPct = Math.min(1, d.serves / target);
+                const hit = d.serves >= target;
+                return (
+                  <div key={i}
+                    onClick={() => d.isToday && onNav("edit-log")}
+                    className={d.isToday ? "today-bar-pulse" : ""}
+                    style={{
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
+                      cursor: d.isToday ? "pointer" : "default",
+                      padding: "6px 2px", borderRadius: 10,
+                      background: d.isToday ? "var(--green-soft)" : "transparent",
+                      border: d.isToday ? "1px solid var(--green)" : "1px solid transparent",
+                      transition: "all .15s ease",
+                    }}>
+                    <div style={{
+                      fontSize: 9, fontWeight: 700,
+                      color: d.isToday ? "var(--green)" : "var(--text-2)",
+                      letterSpacing: 0.5,
+                    }}>{d.day}</div>
+                    {/* Vertical bar with staggered growth */}
+                    <div style={{
+                      width: 8, height: 44, borderRadius: 4,
+                      background: "var(--card-2)",
+                      position: "relative", overflow: "hidden",
+                      border: "1px solid var(--border-faint)",
+                    }}>
+                      <div style={{
+                        position: "absolute", bottom: 0, left: 0, right: 0,
+                        height: mounted ? `${dayPct * 100}%` : "0%",
+                        background: hit ? "var(--green)" : "var(--yellow-2)",
+                        borderRadius: 4,
+                        transition: `height .7s cubic-bezier(.2,.7,.3,1) ${250 + i * 60}ms`,
+                      }}/>
+                    </div>
+                    <div style={{
+                      fontSize: 12, fontWeight: 800,
+                      color: hit ? "var(--green)" : "var(--text)",
+                      lineHeight: 1,
+                      opacity: mounted ? 1 : 0,
+                      transition: `opacity .3s ease ${500 + i * 60}ms`,
+                    }}>{d.serves}</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 
-        {/* Streak alert */}
-        {remaining > 1 && (
-          <div className="card-row outline-orange" style={{ marginTop: 14, color: "var(--red)", cursor: "pointer" }}
-            onClick={() => onNav("log")}>
-            <Icon.Triangle size={18} fill="var(--red)" stroke="none"/>
-            <span style={{ fontSize: 14, fontWeight: 600 }}>
-              Streak at risk — log {remaining} more today!
-            </span>
+        {/* Stat tiles */}
+        <div className="anim-up" style={{ display: "flex", gap: 8, marginTop: 14, animationDelay: "180ms" }}>
+          <div className="card" style={{ flex: 1, padding: "12px 10px" }}>
+            <Icon.Target size={16} stroke="var(--teal)"/>
+            <div style={{ fontSize: 22, fontWeight: 800, marginTop: 6, color: "var(--teal)", lineHeight: 1 }}>{daysHit}/7</div>
+            <div style={{ fontSize: 10, color: "var(--text-2)", marginTop: 2 }}>days hit</div>
           </div>
-        )}
+          <div className="card" style={{ flex: 1, padding: "12px 10px" }}>
+            <Icon.Diamond size={16} stroke="var(--purple)"/>
+            <div style={{ fontSize: 22, fontWeight: 800, marginTop: 6, color: "var(--purple)", lineHeight: 1 }}>{avg}</div>
+            <div style={{ fontSize: 10, color: "var(--text-2)", marginTop: 2 }}>daily avg</div>
+          </div>
+          <div className="card" style={{ flex: 1, padding: "12px 10px" }}>
+            <Icon.Flame size={16} stroke="var(--orange)" fill="var(--orange)"/>
+            <div style={{ fontSize: 22, fontWeight: 800, marginTop: 6, color: "var(--orange)", lineHeight: 1 }}>{streak}</div>
+            <div style={{ fontSize: 10, color: "var(--text-2)", marginTop: 2 }}>day streak</div>
+          </div>
+        </div>
 
-        <button className="btn btn-secondary btn-full btn-lg" style={{ marginTop: 14 }} onClick={() => onNav("calendar")}>
-          View Streak Calendar →
-        </button>
+        {/* AI insight */}
+        <div className="card anim-up" style={{ marginTop: 14, padding: 14, display: "flex", gap: 12, alignItems: "flex-start", cursor: "pointer", animationDelay: "260ms" }}
+          onClick={() => onNav("coach")}>
+          <span style={{
+            width: 36, height: 36, borderRadius: 10, background: "var(--purple-soft)",
+            display: "grid", placeItems: "center", color: "var(--purple)", flexShrink: 0,
+          }}>
+            <Icon.Sparkles size={18}/>
+          </span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>Pattern Detected</div>
+            <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 4, lineHeight: 1.5 }}>
+              You miss Wed + Fri (shoot days). Try pre-logging meals the night before.
+            </div>
+          </div>
+          <Icon.ChevronRight size={14} stroke="var(--text-2)"/>
+        </div>
 
-        <button className="btn btn-teal btn-full btn-lg" style={{ marginTop: 12 }} onClick={() => onNav("coach")}>
-          <Icon.Sparkles size={18}/> Ask AI Coach
-        </button>
+        {/* Knowledge Check insight — entry point to Goal 5B */}
+        <div className="card anim-up" style={{
+          marginTop: 10, padding: 14, display: "flex", gap: 12, alignItems: "flex-start", cursor: "pointer",
+          animationDelay: "300ms",
+          border: "1px solid rgba(124,58,237,0.22)",
+          background: "linear-gradient(135deg, rgba(124,58,237,0.04), rgba(167,139,250,0.06))",
+        }}
+          onClick={() => onNav("quiz-history")}>
+          <span style={{
+            width: 36, height: 36, borderRadius: 10,
+            background: "rgba(124,58,237,0.15)",
+            display: "grid", placeItems: "center", flexShrink: 0,
+            fontSize: 18,
+          }}>🧠</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 13, fontWeight: 700 }}>Knowledge Check History</div>
+            <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 4, lineHeight: 1.5 }}>
+              Starchy Veg accuracy is your lowest at 42%. Tap to review.
+            </div>
+          </div>
+          <Icon.ChevronRight size={14} stroke="var(--text-2)"/>
+        </div>
 
-        <button className="btn btn-ghost btn-full" style={{ marginTop: 12 }} onClick={() => onNav("edit-log")}>
-          <Icon.Refresh size={16}/> Edit today's log
+        <button className="btn btn-secondary btn-full btn-lg anim-up" style={{ marginTop: 14, animationDelay: "340ms" }} onClick={() => onNav("calendar")}>
+          <Icon.Cal size={18}/> View Full Calendar
         </button>
       </div>
     </div>

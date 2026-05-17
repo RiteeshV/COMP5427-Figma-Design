@@ -2,12 +2,12 @@
 
 const { useState: useStateApp, useEffect: useEffectApp, useReducer } = React;
 
-const ROUTES_WITH_DOCK = ["home", "log", "progress", "learn", "quiz", "settings", "edit-log", "learn-detail", "quiz-question", "quiz-score", "profile", "goals", "notifications"];
+const ROUTES_WITH_DOCK = ["home", "log", "progress", "learn", "quiz", "settings", "edit-log", "learn-detail", "quiz-question", "quiz-score", "quiz-history", "profile", "goals", "notifications"];
 const DOCK_KEY_BY_ROUTE = {
   home: "home", log: "log", "edit-log": "log",
   progress: "progress", calendar: "progress",
   learn: "learn", "learn-detail": "learn",
-  quiz: "quiz", "quiz-question": "quiz", "quiz-score": "quiz",
+  quiz: "quiz", "quiz-question": "quiz", "quiz-score": "quiz", "quiz-history": "quiz",
 };
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
@@ -113,7 +113,7 @@ function App() {
       {r === "log" && <MainScreens.LogFoodScreen state={appState} setState={setAppState} onNav={navigate} showToast={showToast}/>}
       {r === "edit-log" && <MainScreens.EditLogScreen state={appState} setState={setAppState} onNav={navigate} showToast={showToast}/>}
 
-      {r === "progress" && <FlowScreens.ProgressScreen state={appState} onNav={navigate}/>}
+      {r === "progress" && <FlowScreens.ProgressScreen state={appState} setState={setAppState} onNav={navigate}/>}
       {r === "calendar" && <FlowScreens.CalendarScreen state={appState} onNav={navigate}/>}
       {r === "camera" && <FlowScreens.CameraScreen state={appState} setState={setAppState} onNav={navigate} showToast={showToast}/>}
       {r === "coach" && <FlowScreens.CoachScreen state={appState} onNav={navigate} showToast={showToast}/>}
@@ -124,6 +124,7 @@ function App() {
       {r === "quiz" && <QuizScreens.QuizHubScreen onNav={navigate} quizScore={quizScore}/>}
       {r === "quiz-question" && <QuizScreens.QuizQuestionScreen qIndex={p.qIndex || 0} answers={p.answers || []} onNav={navigate} setQuizScore={setQuizScore}/>}
       {r === "quiz-score" && <QuizScreens.QuizScoreScreen answers={p.answers || []} onNav={navigate} resetQuiz={() => setQuizScore(null)}/>}
+      {r === "quiz-history" && <QuizScreens.QuizHistoryScreen onNav={navigate}/>}
 
       {r === "settings" && <SettingsScreens.SettingsScreen state={appState} setState={setAppState} onNav={navigate} theme={theme} setTheme={setTheme} showToast={showToast}/>}
       {r === "profile" && <SettingsScreens.ProfileScreen profile={profile} setProfile={setProfile} onNav={navigate} showToast={showToast}/>}
@@ -167,12 +168,13 @@ function App() {
               { value: "home", label: "Home" },
               { value: "log", label: "Log Food" },
               { value: "edit-log", label: "Edit Log" },
-              { value: "progress", label: "Progress" },
+              { value: "progress", label: "Activity" },
               { value: "calendar", label: "Calendar" },
               { value: "camera", label: "AI Camera" },
               { value: "coach", label: "AI Coach" },
               { value: "learn", label: "Learn" },
               { value: "quiz", label: "Quiz" },
+              { value: "quiz-history", label: "Quiz History" },
               { value: "settings", label: "Settings" },
               { value: "profile", label: "Profile" },
               { value: "goals", label: "Daily Goals" },
