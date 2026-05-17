@@ -24,7 +24,7 @@ function ProgressScreen({ state, setState, onNav }) {
 
   // Synthesize per-day serve counts so the weekly bars are meaningful.
   // The last entry is "today" and reads from live state.
-  const dailyServes = [5, 5, 3, 5, 2, 4]; // Mon..Sat mock
+  const dailyServes = [5, 5, 3, 5, 2, 5]; // Mon..Sat mock
   const dayData = weekDays.map((d, i) => {
     const isToday = i === weekDays.length - 1;
     return {
@@ -38,7 +38,7 @@ function ProgressScreen({ state, setState, onNav }) {
 
   return (
     <div className="scene has-dock">
-      <BackHeader onNav={onNav} to="home" label="Home" title="Activity"/>
+      <BackHeader onNav={onNav} to="home" label="Home" title="Activity" />
       <div className="page-pad">
 
         {/* TODAY CARD — mirrors Log Serves hero pattern, includes Edit pill */}
@@ -52,7 +52,7 @@ function ProgressScreen({ state, setState, onNav }) {
           <div style={{
             position: "absolute", right: -50, top: -50, width: 160, height: 160, borderRadius: "50%",
             background: "rgba(255,255,255,0.07)", pointerEvents: "none",
-          }}/>
+          }} />
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", position: "relative" }}>
             <div>
               <div className="eyebrow" style={{ color: "#fff", opacity: 0.85 }}>TODAY · {todayLabel}</div>
@@ -68,7 +68,7 @@ function ProgressScreen({ state, setState, onNav }) {
               padding: "7px 13px", borderRadius: 999, cursor: "pointer",
               backdropFilter: "blur(6px)",
             }}>
-              <Icon.Pencil size={13} strokeWidth={2.2}/> Edit
+              <Icon.Pencil size={13} strokeWidth={2.2} /> Edit
             </button>
           </div>
           {/* Progress bar — animated fill */}
@@ -79,7 +79,7 @@ function ProgressScreen({ state, setState, onNav }) {
                 width: mounted ? `${Math.min(100, pct)}%` : "0%",
                 background: "#fff", borderRadius: 999,
                 transition: "width .9s cubic-bezier(.2,.7,.3,1) .25s",
-              }}/>
+              }} />
             </div>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 8, fontSize: 11, opacity: 0.9 }}>
               <span style={{ fontWeight: 700 }}>{pct}% of target</span>
@@ -103,11 +103,11 @@ function ProgressScreen({ state, setState, onNav }) {
                 const hit = d.serves >= target;
                 return (
                   <div key={i}
-                    onClick={() => d.isToday && onNav("edit-log")}
+                    onClick={() => onNav("edit-log")}
                     className={d.isToday ? "today-bar-pulse" : ""}
                     style={{
                       display: "flex", flexDirection: "column", alignItems: "center", gap: 6,
-                      cursor: d.isToday ? "pointer" : "default",
+                      cursor: "pointer",
                       padding: "6px 2px", borderRadius: 10,
                       background: d.isToday ? "var(--green-soft)" : "transparent",
                       border: d.isToday ? "1px solid var(--green)" : "1px solid transparent",
@@ -131,7 +131,7 @@ function ProgressScreen({ state, setState, onNav }) {
                         background: hit ? "var(--green)" : "var(--yellow-2)",
                         borderRadius: 4,
                         transition: `height .7s cubic-bezier(.2,.7,.3,1) ${250 + i * 60}ms`,
-                      }}/>
+                      }} />
                     </div>
                     <div style={{
                       fontSize: 12, fontWeight: 800,
@@ -150,17 +150,17 @@ function ProgressScreen({ state, setState, onNav }) {
         {/* Stat tiles */}
         <div className="anim-up" style={{ display: "flex", gap: 8, marginTop: 14, animationDelay: "180ms" }}>
           <div className="card" style={{ flex: 1, padding: "12px 10px" }}>
-            <Icon.Target size={16} stroke="var(--teal)"/>
+            <Icon.Target size={16} stroke="var(--teal)" />
             <div style={{ fontSize: 22, fontWeight: 800, marginTop: 6, color: "var(--teal)", lineHeight: 1 }}>{daysHit}/7</div>
             <div style={{ fontSize: 10, color: "var(--text-2)", marginTop: 2 }}>days hit</div>
           </div>
           <div className="card" style={{ flex: 1, padding: "12px 10px" }}>
-            <Icon.Diamond size={16} stroke="var(--purple)"/>
+            <Icon.Diamond size={16} stroke="var(--purple)" />
             <div style={{ fontSize: 22, fontWeight: 800, marginTop: 6, color: "var(--purple)", lineHeight: 1 }}>{avg}</div>
             <div style={{ fontSize: 10, color: "var(--text-2)", marginTop: 2 }}>daily avg</div>
           </div>
           <div className="card" style={{ flex: 1, padding: "12px 10px" }}>
-            <Icon.Flame size={16} stroke="var(--orange)" fill="var(--orange)"/>
+            <Icon.Flame size={16} stroke="var(--orange)" fill="var(--orange)" />
             <div style={{ fontSize: 22, fontWeight: 800, marginTop: 6, color: "var(--orange)", lineHeight: 1 }}>{streak}</div>
             <div style={{ fontSize: 10, color: "var(--text-2)", marginTop: 2 }}>day streak</div>
           </div>
@@ -173,7 +173,7 @@ function ProgressScreen({ state, setState, onNav }) {
             width: 36, height: 36, borderRadius: 10, background: "var(--purple-soft)",
             display: "grid", placeItems: "center", color: "var(--purple)", flexShrink: 0,
           }}>
-            <Icon.Sparkles size={18}/>
+            <Icon.Sparkles size={18} />
           </span>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 13, fontWeight: 700 }}>Pattern Detected</div>
@@ -181,7 +181,7 @@ function ProgressScreen({ state, setState, onNav }) {
               You miss Wed + Fri (shoot days). Try pre-logging meals the night before.
             </div>
           </div>
-          <Icon.ChevronRight size={14} stroke="var(--text-2)"/>
+          <Icon.ChevronRight size={14} stroke="var(--text-2)" />
         </div>
 
         {/* Knowledge Check insight — entry point to Goal 5B */}
@@ -204,11 +204,11 @@ function ProgressScreen({ state, setState, onNav }) {
               Starchy Veg accuracy is your lowest at 42%. Tap to review.
             </div>
           </div>
-          <Icon.ChevronRight size={14} stroke="var(--text-2)"/>
+          <Icon.ChevronRight size={14} stroke="var(--text-2)" />
         </div>
 
         <button className="btn btn-secondary btn-full btn-lg anim-up" style={{ marginTop: 14, animationDelay: "340ms" }} onClick={() => onNav("calendar")}>
-          <Icon.Cal size={18}/> View Full Calendar
+          <Icon.Cal size={18} /> View Full Calendar
         </button>
       </div>
     </div>
@@ -236,7 +236,7 @@ function CalendarScreen({ state, onNav }) {
 
   return (
     <div className="scene has-dock">
-      <BackHeader onNav={onNav} to="progress" label="Progress" title="April 2026" subtitle={`${hitCount} of ${today} days on target  ·  ${rate}%`}/>
+      <BackHeader onNav={onNav} to="progress" label="Progress" title="April 2026" subtitle={`${hitCount} of ${today} days on target  ·  ${rate}%`} />
       <div className="page-pad">
 
         <div style={{
@@ -244,7 +244,7 @@ function CalendarScreen({ state, onNav }) {
           textAlign: "center", color: "#fff", fontWeight: 700, fontSize: 16,
           display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
         }}>
-          {rate}% HIT RATE — Excellent! <Icon.Flame size={18} fill="#fff" stroke="none"/>
+          {rate}% HIT RATE — Excellent! <Icon.Flame size={18} fill="#fff" stroke="none" />
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 6, marginTop: 22 }}>
@@ -254,12 +254,12 @@ function CalendarScreen({ state, onNav }) {
           {days.map((d, i) => {
             const bg = d.state === "hit" ? "var(--green)"
               : d.state === "today" ? "var(--yellow)"
-              : d.state === "miss" ? "var(--card)"
-              : "transparent";
+                : d.state === "miss" ? "var(--card)"
+                  : "transparent";
             const fg = d.state === "today" ? "#151A16"
               : d.state === "future" ? "var(--text-3)"
-              : d.state === "hit" ? "#fff"
-              : "var(--text-2)";
+                : d.state === "hit" ? "#fff"
+                  : "var(--text-2)";
             return (
               <div key={i} style={{
                 aspectRatio: "1 / 1", borderRadius: 10, background: bg,
@@ -276,29 +276,29 @@ function CalendarScreen({ state, onNav }) {
 
         {/* Legend */}
         <div style={{ display: "flex", gap: 18, marginTop: 18, fontSize: 12 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "var(--green)" }}/> Hit</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "var(--card)", border: "1px solid var(--border)" }}/> Miss</div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "var(--yellow)" }}/> Today</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "var(--green)" }} /> Hit</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "var(--card)", border: "1px solid var(--border)" }} /> Miss</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 6 }}><span style={{ width: 10, height: 10, borderRadius: 3, background: "var(--yellow)" }} /> Today</div>
         </div>
 
         {/* Pattern detected */}
         <div className="card" style={{ marginTop: 18, display: "flex", gap: 12, alignItems: "flex-start", cursor: "pointer" }}
           onClick={() => onNav("coach")}>
-          <Icon.Sparkles size={20} stroke="var(--purple)"/>
+          <Icon.Sparkles size={20} stroke="var(--purple)" />
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: 14, fontWeight: 700 }}>Pattern Detected</div>
             <div style={{ fontSize: 11, color: "var(--text-2)", marginTop: 4, lineHeight: 1.5 }}>
               You miss Wed + Tue (shoot days). Pre-log meals the night before!
             </div>
           </div>
-          <Icon.ChevronRight size={16} stroke="var(--text-2)"/>
+          <Icon.ChevronRight size={16} stroke="var(--text-2)" />
         </div>
 
         <button className="btn btn-teal btn-full btn-lg" style={{ marginTop: 14 }} onClick={() => onNav("notifications")}>
           Set Shoot Day Reminder →
         </button>
         <button className="btn btn-secondary btn-full btn-lg" style={{ marginTop: 10 }} onClick={() => onNav("coach")}>
-          <Icon.Sparkles size={18}/> Ask AI Coach
+          <Icon.Sparkles size={18} /> Ask AI Coach
         </button>
       </div>
     </div>
@@ -348,7 +348,7 @@ function CameraScreen({ state, setState, onNav, showToast }) {
     <div className="scene" style={{ background: "#0a0a0a", color: "#fff" }}>
       <div style={{ padding: "16px 24px 14px", background: "#101410", display: "flex", alignItems: "center", gap: 14 }}>
         <div onClick={() => onNav("home")} style={{ color: "var(--green)", fontSize: 15, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-          <Icon.ArrowLeft size={16}/> Back
+          <Icon.ArrowLeft size={16} /> Back
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 22, fontWeight: 700 }}>Scan Food</div>
@@ -363,10 +363,10 @@ function CameraScreen({ state, setState, onNav, showToast }) {
       }}>
         {/* Grid lines */}
         <div style={{ position: "absolute", inset: 0, opacity: 0.18 }}>
-          <div style={{ position: "absolute", left: "33.33%", top: 0, bottom: 0, width: 1, background: "var(--green)" }}/>
-          <div style={{ position: "absolute", left: "66.66%", top: 0, bottom: 0, width: 1, background: "var(--green)" }}/>
-          <div style={{ position: "absolute", top: "33.33%", left: 0, right: 0, height: 1, background: "var(--green)" }}/>
-          <div style={{ position: "absolute", top: "66.66%", left: 0, right: 0, height: 1, background: "var(--green)" }}/>
+          <div style={{ position: "absolute", left: "33.33%", top: 0, bottom: 0, width: 1, background: "var(--green)" }} />
+          <div style={{ position: "absolute", left: "66.66%", top: 0, bottom: 0, width: 1, background: "var(--green)" }} />
+          <div style={{ position: "absolute", top: "33.33%", left: 0, right: 0, height: 1, background: "var(--green)" }} />
+          <div style={{ position: "absolute", top: "66.66%", left: 0, right: 0, height: 1, background: "var(--green)" }} />
         </div>
         {/* Corners */}
         {[
@@ -385,7 +385,7 @@ function CameraScreen({ state, setState, onNav, showToast }) {
             ...(i === 1 && { borderTopWidth: 3, borderRightWidth: 3, borderRadius: "0 12px 0 0" }),
             ...(i === 2 && { borderBottomWidth: 3, borderLeftWidth: 3, borderRadius: "0 0 0 12px" }),
             ...(i === 3 && { borderBottomWidth: 3, borderRightWidth: 3, borderRadius: "0 0 12px 0" }),
-          }}/>
+          }} />
         ))}
 
         {/* Scan line */}
@@ -395,7 +395,7 @@ function CameraScreen({ state, setState, onNav, showToast }) {
             height: 2, background: "var(--green)",
             boxShadow: "0 0 12px var(--green)",
             animation: "scanLine 1.5s ease-in-out infinite",
-          }}/>
+          }} />
         )}
 
         <div style={{
@@ -421,7 +421,7 @@ function CameraScreen({ state, setState, onNav, showToast }) {
         }}>
           <div style={{ fontSize: 9, color: "var(--green)", fontWeight: 700, letterSpacing: 3 }}>AI DETECTED:</div>
           <div style={{ fontSize: 22, fontWeight: 700, marginTop: 4, display: "flex", alignItems: "center", gap: 8 }}>
-            <Icon.Salad size={22} stroke="var(--green)"/>
+            <Icon.Salad size={22} stroke="var(--green)" />
             {detected.name}
           </div>
           <div style={{ fontSize: 12, color: "var(--text-2)", marginTop: 6 }}>
@@ -439,7 +439,7 @@ function CameraScreen({ state, setState, onNav, showToast }) {
             })}
           </div>
           <button className="btn btn-primary btn-full btn-lg" style={{ marginTop: 14 }} onClick={logMeal}>
-            Log This Meal <Icon.ArrowRight size={18}/>
+            Log This Meal <Icon.ArrowRight size={18} />
           </button>
           <div onClick={rescan} style={{ textAlign: "center", marginTop: 12, color: "var(--text-2)", fontSize: 13, cursor: "pointer" }}>
             Scan Again
@@ -491,16 +491,16 @@ function CoachScreen({ state, onNav, showToast }) {
       {/* Header */}
       <div style={{ padding: "10px 24px 14px", display: "flex", alignItems: "center", gap: 12, borderBottom: "1px solid var(--border-faint)" }}>
         <div onClick={() => onNav("home")} style={{ cursor: "pointer", padding: 6 }}>
-          <Icon.ArrowLeft size={18} stroke="var(--green)"/>
+          <Icon.ArrowLeft size={18} stroke="var(--green)" />
         </div>
         <div style={{ width: 44, height: 44, borderRadius: 14, background: "var(--teal)", display: "grid", placeItems: "center" }}>
-          <Icon.Sparkles size={22} stroke="#fff"/>
+          <Icon.Sparkles size={22} stroke="#fff" />
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ fontSize: 18, fontWeight: 700 }}>AI Coach</div>
           <div style={{ fontSize: 11, color: "var(--text-2)" }}>Powered by VeggieTrack AI</div>
         </div>
-        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--green)" }}/>
+        <div style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--green)" }} />
       </div>
 
       {/* Messages */}
@@ -528,12 +528,12 @@ function CoachScreen({ state, onNav, showToast }) {
             padding: "14px 16px",
             display: "flex", gap: 4,
           }}>
-            {[0,1,2].map(i => (
+            {[0, 1, 2].map(i => (
               <span key={i} style={{
                 width: 6, height: 6, borderRadius: "50%", background: "var(--text-2)",
                 animation: "bounce 1.2s ease-in-out infinite",
                 animationDelay: (i * 0.15) + "s",
-              }}/>
+              }} />
             ))}
           </div>
         )}
@@ -579,7 +579,7 @@ function CoachScreen({ state, onNav, showToast }) {
           width: 44, height: 44, borderRadius: 22, background: "var(--green)",
           display: "grid", placeItems: "center", color: "#fff",
         }}>
-          <Icon.Send size={18}/>
+          <Icon.Send size={18} />
         </button>
       </div>
     </div>

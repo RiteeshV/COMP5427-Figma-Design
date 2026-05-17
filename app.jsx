@@ -65,6 +65,7 @@ function App() {
     root: false,
     starchy: false,
     other: false,
+    "what-counts": false,
   });
 
   // Quiz

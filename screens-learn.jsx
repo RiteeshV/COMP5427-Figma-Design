@@ -100,6 +100,22 @@ const LEARN_TOPICS = [
     didYouKnow: "Cooked tomatoes contain 4x more bioavailable lycopene than raw — pasta sauce, anyone?",
     read: false,
   },
+  {
+    id: "what-counts",
+    title: "What counts as a serve?",
+    sub: "A quick visual guide",
+    description: "Confused about serving sizes? Here is what 1 serve actually looks like.",
+    color: "var(--purple)",
+    badgeColor: "var(--purple)",
+    icon: "apple",
+    facts: [
+      "1 cup of raw salad vegetables (e.g., lettuce, spinach) = 1 serve",
+      "½ cup of cooked vegetables (e.g., broccoli, carrots) = 1 serve",
+      "½ cup of sweet corn, or 1 medium potato = 1 serve",
+    ],
+    didYouKnow: "Most adults need at least 5 serves of vegetables each day for good health and disease prevention.",
+    read: false,
+  },
 ];
 
 function LearnScreen({ onNav, learnState }) {

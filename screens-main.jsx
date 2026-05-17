@@ -256,6 +256,13 @@ function LogFoodScreen({ state, setState, onNav, showToast }) {
           onAdd={(amt) => commit(amt)}
         />
 
+        <div onClick={() => onNav("learn-detail", { topic: "what-counts" })} style={{
+          textAlign: "center", marginTop: 14, color: "var(--green)", fontSize: 13,
+          cursor: "pointer", textDecoration: "underline", fontWeight: 600,
+        }}>
+          What counts as a serve?
+        </div>
+
         {/* Scan with AI — alternative entry point, 3D pill */}
         <div style={{ display: "flex", justifyContent: "center", marginTop: 14 }}>
           <button className="scan-ai-btn" onClick={() => onNav("camera")} style={{
