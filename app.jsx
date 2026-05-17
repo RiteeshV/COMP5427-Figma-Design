@@ -15,7 +15,7 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "accentColor": "#22D3EE",
   "yellowAccent": "#FFD23F",
   "cornerStyle": "rounded",
-  "startScreen": "login"
+  "startScreen": "ios-home"
 }/*EDITMODE-END*/;
 
 function App() {
@@ -106,6 +106,7 @@ function App() {
     <UI.Phone theme={theme}>
       {toast && <UI.Toast message={toast} onDone={() => setToast("")} />}
 
+      {r === "ios-home" && <AuthScreens.IOSHomeScreen onNav={navigate}/>}
       {r === "login" && <AuthScreens.LoginScreen onNav={navigate} theme={theme}/>}
       {r === "forgot" && <AuthScreens.ForgotScreen onNav={navigate} showToast={showToast}/>}
       {r === "create" && <AuthScreens.CreateAccountScreen onNav={navigate} showToast={showToast}/>}
@@ -121,6 +122,7 @@ function App() {
 
       {r === "learn" && <LearnScreens.LearnScreen onNav={navigate} learnState={learnState}/>}
       {r === "learn-detail" && <LearnScreens.LearnDetailScreen topicId={p.topic} onNav={navigate} learnState={learnState} setLearnState={setLearnState}/>}
+      {r === "learn-completion" && <LearnScreens.LearnCompletionScreen topicId={p.topic} onNav={navigate}/>}
 
       {r === "quiz" && <QuizScreens.QuizHubScreen onNav={navigate} quizScore={quizScore}/>}
       {r === "quiz-question" && <QuizScreens.QuizQuestionScreen qIndex={p.qIndex || 0} answers={p.answers || []} onNav={navigate} setQuizScore={setQuizScore}/>}

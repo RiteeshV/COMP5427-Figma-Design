@@ -327,5 +327,81 @@ function CreateAccountScreen({ onNav, showToast }) {
     </div>
   );
 }
+// ───── Mock iOS Home Screen ─────
+function IOSHomeScreen({ onNav }) {
+  const wallpaper = "url('https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop') center/cover";
+  
+  // Create a 4x4 grid of mock apps
+  const apps = [
+    { name: "Mail", bg: "#0A84FF", icon: <Icon.Mail/> },
+    { name: "Calendar", bg: "#fff", icon: <div style={{color: "#FF3B30", fontWeight: 700, fontSize: 18, lineHeight:1, marginTop:2}}>17</div> },
+    { name: "Photos", bg: "#fff", icon: <div style={{color: "#34C759", fontSize:24}}>❋</div> },
+    { name: "Camera", bg: "#8E8E93", icon: <Icon.Camera/> },
+    
+    { name: "Weather", bg: "#5AC8FA", icon: <Icon.Sun/> },
+    { name: "Clock", bg: "#000", icon: <Icon.Refresh/> },
+    { name: "Maps", bg: "#34C759", icon: <Icon.ArrowRight/> },
+    { name: "Notes", bg: "#FFD60A", icon: <Icon.Pencil/> },
+    
+    { name: "Reminders", bg: "#fff", icon: <Icon.Check color="#FF3B30"/> },
+    { name: "Settings", bg: "#8E8E93", icon: <Icon.Settings/> },
+    { name: "VeggieTrack", bg: "#3DDC84", icon: <Icon.Logo size={32} fill="#0F1D15"/>, isTarget: true },
+  ];
 
-window.AuthScreens = { LoginScreen, ForgotScreen, CreateAccountScreen };
+  return (
+    <div className="scene" style={{ background: wallpaper, color: "#fff" }}>
+      {/* Status bar spacer */}
+      <div style={{ height: 44 }} />
+      
+      {/* App Grid */}
+      <div style={{
+        padding: "36px 20px 0", display: "grid", gridTemplateColumns: "repeat(4, 1fr)",
+        gap: "24px 16px",
+      }}>
+        {apps.map((a, i) => (
+          <div key={i} onClick={() => a.isTarget && onNav("login")} style={{
+            display: "flex", flexDirection: "column", alignItems: "center", cursor: a.isTarget ? "pointer" : "default",
+            opacity: a.isTarget ? 1 : 0.9, transition: "transform .1s", transform: "scale(1)"
+          }} className={a.isTarget ? "anim-pop hover-scale" : ""}>
+            <div style={{
+              width: 62, height: 62, borderRadius: 14, background: a.bg,
+              display: "grid", placeItems: "center", color: "#fff",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
+              animationDelay: a.isTarget ? "400ms" : "0"
+            }}>
+              {a.icon}
+            </div>
+            <div style={{ fontSize: 11, fontWeight: 500, marginTop: 6, textShadow: "0 1px 3px rgba(0,0,0,0.4)" }}>
+              {a.name}
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Dock */}
+      <div style={{
+        position: "absolute", bottom: 20, left: 16, right: 16, height: 90,
+        background: "rgba(255,255,255,0.3)", backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)", borderRadius: 32,
+        display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 16px"
+      }}>
+        {[
+          { bg: "#34C759", icon: <Icon.User/> }, // Phone mock
+          { bg: "#0A84FF", icon: <Icon.Mail/> }, // Mail mock
+          { bg: "#FF3B30", icon: <Icon.Heart/> }, // Health mock
+          { bg: "#FF9500", icon: <Icon.Bolt/> }, // Shortcuts mock
+        ].map((d, i) => (
+          <div key={i} style={{
+            width: 62, height: 62, borderRadius: 14, background: d.bg,
+            display: "grid", placeItems: "center", color: "#fff",
+            opacity: 0.9
+          }}>
+            {d.icon}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+window.AuthScreens = { LoginScreen, ForgotScreen, CreateAccountScreen, IOSHomeScreen };
