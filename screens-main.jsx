@@ -455,7 +455,7 @@ function EditLogScreen({ state, setState, onNav, showToast, params = {} }) {
             <span style={{
               fontSize: 44, fontWeight: 800, color: "var(--red)", lineHeight: 1,
               textDecoration: "line-through", letterSpacing: -1.5,
-            }}>{count}</span>
+            }}>{initialCount}</span>
             <div style={{ fontSize: 12, color: "var(--text-2)", lineHeight: 1.4, fontFamily: "'DM Mono', monospace" }}>
               serves<br/>(before correction)
             </div>
@@ -495,13 +495,13 @@ function EditLogScreen({ state, setState, onNav, showToast, params = {} }) {
               }}>
                 new count
                 {!correctedSame && (
-                  <span style={{
-                    color: correctedDown ? "var(--red)" : "var(--green)",
-                    background: correctedDown ? "var(--red-soft)" : "var(--green-soft)",
-                    padding: "2px 6px", borderRadius: 999, fontWeight: 700,
+                  <div className="anim-up" style={{
+                    fontSize: 12, fontWeight: 700, color: correctedUp ? "var(--green)" : "var(--orange)",
+                    background: correctedUp ? "rgba(48,185,100,0.15)" : "rgba(232,98,10,0.15)",
+                    padding: "2px 8px", borderRadius: 999, marginLeft: "auto", display: "inline-block"
                   }}>
-                    {correctedUp ? `+${newCount - count}` : `${newCount - count}`}
-                  </span>
+                    {correctedUp ? `+${newCount - initialCount}` : `${newCount - initialCount}`}
+                  </div>
                 )}
               </div>
             </div>
@@ -540,9 +540,11 @@ function EditLogScreen({ state, setState, onNav, showToast, params = {} }) {
         </div>
 
         <button
-          className={"btn btn-full btn-lg " + (correctedSame ? "btn-secondary" : correctedUp ? "btn-primary" : "btn-red")}
-          style={{ marginTop: 18 }} onClick={save} disabled={correctedSame}>
-          {correctedSame ? "No changes" : correctedUp ? `Add ${newCount - count} more → ${newCount} serves` : `Reduce to ${newCount} serve${newCount !== 1 ? "s" : ""}`} <Icon.Check size={18}/>
+          className={`btn btn-full btn-lg ${correctedSame ? "btn-secondary" : "btn-primary"}`}
+          style={{ marginTop: 24, transition: "background .3s, color .3s" }}
+          disabled={!reason}
+          onClick={save}>
+          {correctedSame ? "No changes" : correctedUp ? `Add ${newCount - initialCount} more → ${newCount} serves` : `Reduce to ${newCount} serve${newCount !== 1 ? "s" : ""}`} <Icon.Check size={18}/>
         </button>
         <div onClick={() => onNav("home")} style={{
           textAlign: "center", marginTop: 14, color: "var(--text-2)", fontSize: 14,
