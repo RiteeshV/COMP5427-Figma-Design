@@ -327,8 +327,8 @@ function LogFoodScreen({ state, setState, onNav, showToast }) {
 // ───── Edit Log ─────
 function EditLogScreen({ state, setState, onNav, showToast, params = {} }) {
   const { target, streak } = state;
-  const count = params.serves !== undefined ? params.serves : state.count;
-  const [newCount, setNewCount] = useStateH(Math.max(0, count - 1));
+  const [initialCount] = useStateH(params.serves !== undefined ? params.serves : state.count);
+  const [newCount, setNewCount] = useStateH(Math.max(0, initialCount - 1));
   const [reason, setReason] = useStateH("over");
   const [confirmed, setConfirmed] = useStateH(false);
 
@@ -344,9 +344,9 @@ function EditLogScreen({ state, setState, onNav, showToast, params = {} }) {
   const dec = () => setNewCount(c => Math.max(0, c - 1));
   const reasonLabel = reasons.find(r => r.id === reason)?.label;
   // direction of correction — lets us style and copy contextually
-  const correctedUp   = newCount > count;
-  const correctedDown = newCount < count;
-  const correctedSame = newCount === count;
+  const correctedUp   = newCount > initialCount;
+  const correctedDown = newCount < initialCount;
+  const correctedSame = newCount === initialCount;
 
   const save = () => {
     if (!params.date) {
@@ -394,7 +394,7 @@ function EditLogScreen({ state, setState, onNav, showToast, params = {} }) {
             <span style={{
               fontSize: 32, fontWeight: 800, color: "var(--red)",
               textDecoration: "line-through", lineHeight: 1, letterSpacing: -1,
-            }}>{count}</span>
+            }}>{initialCount}</span>
             <Icon.ArrowRight size={20} stroke="var(--text-2)"/>
             <span className="anim-pop" style={{
               fontSize: 32, fontWeight: 800, color: "var(--green)",
