@@ -624,6 +624,55 @@ input, textarea { font-family: inherit; }
 .today-bar-pulse {
   animation: todayBarPulse 2.4s ease-in-out infinite;
 }
+
+/* Quiz Hub — neural pulse + button shine */
+@keyframes qhDotPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%      { opacity: 0.4; transform: scale(0.7); }
+}
+@keyframes qhBrainFloat {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%      { transform: translateY(-2px) rotate(1deg); }
+}
+.qh-brain {
+  animation: qhBrainFloat 3.6s ease-in-out infinite;
+}
+@keyframes qhBtnShine {
+  0%   { transform: translateX(-120%) skewX(-20deg); }
+  60%  { transform: translateX(220%) skewX(-20deg); }
+  100% { transform: translateX(220%) skewX(-20deg); }
+}
+.qh-start-btn::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(167,139,250,0.4) 50%, transparent 100%);
+  animation: qhBtnShine 3.2s ease-in-out infinite;
+  pointer-events: none;
+}
+.qh-start-btn:hover {
+  transform: translateY(-1px);
+  transition: transform .15s ease;
+}
+.qh-start-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 2px 0 rgba(76,29,149,0.4), 0 4px 12px rgba(255,255,255,0.2) !important;
+}
+.qh-topic-row {
+  animation: upFade .5s cubic-bezier(.2,.7,.3,1) both;
+  transition: transform .15s ease, box-shadow .15s ease;
+}
+.qh-topic-row:hover {
+  transform: translateX(2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+.qh-history-btn:hover {
+  transform: translateY(-1px);
+  transition: transform .15s ease;
+}
 @keyframes memojiPulse {
   0%, 100% { opacity: 0.7; transform: scale(1); }
   50%      { opacity: 1; transform: scale(1.08); }

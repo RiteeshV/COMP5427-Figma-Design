@@ -64,136 +64,290 @@ function QuizHubScreen({ onNav, quizScore }) {
   const done = quizScore !== null;
   const today = new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "short" });
 
+  // Knowledge level tier derived from overall accuracy
+  const overallAcc = 86;
+  const tier = overallAcc >= 95 ? { label: "MASTER",     dots: 4 }
+            : overallAcc >= 85 ? { label: "EXPERT",     dots: 3 }
+            : overallAcc >= 70 ? { label: "ADEPT",      dots: 2 }
+            :                    { label: "APPRENTICE", dots: 1 };
+
   return (
     <div className="scene has-dock">
-      {/* Violet gradient header */}
+      {/* Violet gradient header with neural dot grid + tier badge */}
       <div style={{
-        padding: "16px 20px 18px",
+        padding: "16px 20px 22px",
         background: "linear-gradient(135deg, #4c1d95, #7c3aed)",
         color: "#fff",
         borderRadius: "0 0 24px 24px",
+        position: "relative", overflow: "hidden",
       }}>
-        <div onClick={() => onNav("home")} style={{
-          fontSize: 11, opacity: 0.7, fontFamily: "'DM Mono', monospace",
-          marginBottom: 6, cursor: "pointer",
-          display: "inline-flex", alignItems: "center", gap: 4,
+        {/* Neural dot grid */}
+        <svg width="100%" height="100%" style={{
+          position: "absolute", inset: 0, opacity: 0.18, pointerEvents: "none",
         }}>
-          <Icon.ArrowLeft size={12}/> Home
-        </div>
-        <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.3 }}>Daily Knowledge Check</div>
-        <div style={{ fontSize: 11, opacity: 0.6, fontFamily: "'DM Mono', monospace", marginTop: 3 }}>
-          {today} · {done ? "Completed ✓" : "Not yet completed"}
+          <defs>
+            <pattern id="qhDots" x="0" y="0" width="22" height="22" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1.2" fill="#fff"/>
+            </pattern>
+            <radialGradient id="qhDotsMask" cx="80%" cy="20%" r="80%">
+              <stop offset="0%" stopColor="#fff" stopOpacity="1"/>
+              <stop offset="100%" stopColor="#fff" stopOpacity="0"/>
+            </radialGradient>
+            <mask id="qhMask">
+              <rect width="100%" height="100%" fill="url(#qhDotsMask)"/>
+            </mask>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#qhDots)" mask="url(#qhMask)"/>
+        </svg>
+
+        <div style={{ position: "relative" }}>
+          <div onClick={() => onNav("home")} style={{
+            fontSize: 11, opacity: 0.7, fontFamily: "'DM Mono', monospace",
+            marginBottom: 6, cursor: "pointer",
+            display: "inline-flex", alignItems: "center", gap: 4,
+          }}>
+            <Icon.ArrowLeft size={12}/> Home
+          </div>
+          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 12 }}>
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 800, letterSpacing: -0.3 }}>Knowledge Check</div>
+              <div style={{ fontSize: 11, opacity: 0.6, fontFamily: "'DM Mono', monospace", marginTop: 3 }}>
+                {today} · {done ? "Completed ✓" : "Not yet completed"}
+              </div>
+            </div>
+            {/* Tier badge */}
+            <div style={{
+              display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 4,
+            }}>
+              <div style={{
+                display: "flex", gap: 3,
+              }}>
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <span key={i} style={{
+                    width: 6, height: 6, borderRadius: "50%",
+                    background: i < tier.dots ? "#FFD23F" : "rgba(255,255,255,0.25)",
+                    boxShadow: i < tier.dots ? "0 0 6px rgba(255,210,63,0.7)" : "none",
+                  }}/>
+                ))}
+              </div>
+              <div style={{
+                fontSize: 10, fontWeight: 800, letterSpacing: 1.4,
+                fontFamily: "'DM Mono', monospace",
+                color: "#FFD23F",
+              }}>
+                {tier.label}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       <div className="page-pad" style={{ paddingTop: 16 }}>
-        {/* Today's Check hero — violet gradient with brain glyph */}
-        <div className="anim-up" style={{
-          padding: "18px 20px", borderRadius: 20,
-          background: "linear-gradient(135deg, #4c1d95, #7c3aed)",
+        {/* Today's Check hero — violet gradient with neural pattern + pulsing CTA */}
+        <div className="anim-up qh-hero" style={{
+          padding: "18px 20px", borderRadius: 22,
+          background: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 70%, #a78bfa 100%)",
           color: "#fff", position: "relative", overflow: "hidden",
-          boxShadow: "0 10px 24px rgba(124,58,237,0.32)",
+          boxShadow: "0 14px 30px rgba(124,58,237,0.4), 0 4px 10px rgba(76,29,149,0.3)",
         }}>
+          {/* Decorative orb */}
           <div style={{
-            position: "absolute", right: -40, top: -40, width: 140, height: 140,
-            borderRadius: "50%", background: "rgba(255,255,255,0.08)", pointerEvents: "none",
+            position: "absolute", right: -50, top: -50, width: 160, height: 160,
+            borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 70%)",
+            pointerEvents: "none",
           }}/>
+          {/* Inner sheen */}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 40%)",
+            pointerEvents: "none", borderRadius: 22,
+          }}/>
+
           <div style={{ display: "flex", gap: 14, alignItems: "center", position: "relative" }}>
-            <div style={{
-              width: 56, height: 56, borderRadius: 16,
+            <div className="qh-brain" style={{
+              width: 60, height: 60, borderRadius: 18,
               background: "rgba(255,255,255,0.22)",
-              display: "grid", placeItems: "center", fontSize: 28, flexShrink: 0,
-              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.3)",
+              display: "grid", placeItems: "center", fontSize: 30, flexShrink: 0,
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.4), 0 4px 12px rgba(0,0,0,0.15)",
+              border: "1px solid rgba(255,255,255,0.18)",
             }}>🧠</div>
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 18, fontWeight: 800, letterSpacing: -0.2 }}>Today's Check</div>
               <div style={{
-                fontSize: 11, opacity: 0.75, fontFamily: "'DM Mono', monospace",
-                marginTop: 3, lineHeight: 1.5,
+                fontSize: 10, fontWeight: 700, letterSpacing: 1.5, opacity: 0.85,
+                fontFamily: "'DM Mono', monospace",
               }}>
-                3 questions · ~60 seconds<br/>
-                Last completed: yesterday (3/3)
+                TODAY'S CHECK
+              </div>
+              <div style={{ fontSize: 22, fontWeight: 800, letterSpacing: -0.3, marginTop: 2 }}>
+                3 questions
+              </div>
+              <div style={{
+                fontSize: 11, opacity: 0.78, fontFamily: "'DM Mono', monospace",
+                marginTop: 4,
+              }}>
+                ~60s · Last: yesterday (3/3)
               </div>
             </div>
           </div>
+
           <button onClick={() => onNav("quiz-question", { qIndex: 0, answers: [] })}
+            className="qh-start-btn"
             style={{
-              marginTop: 14, background: "#fff", color: "#6d28d9",
-              border: "none", borderRadius: 12, padding: "10px 20px",
-              fontWeight: 700, fontSize: 14, cursor: "pointer",
+              marginTop: 16, background: "#fff", color: "#6d28d9",
+              border: "none", borderRadius: 14, padding: "12px 22px",
+              fontWeight: 800, fontSize: 14, cursor: "pointer",
               display: "inline-flex", alignItems: "center", gap: 8,
-              boxShadow: "0 4px 0 rgba(0,0,0,0.12)",
+              boxShadow: "0 6px 0 rgba(76,29,149,0.4), 0 10px 24px rgba(255,255,255,0.25)",
+              position: "relative", overflow: "hidden",
             }}>
-            {done ? "Review Quiz" : "Start Quiz"} <Icon.ArrowRight size={16}/>
+            <Icon.Sparkles size={15} stroke="#6d28d9"/>
+            {done ? "Review Quiz" : "Start Quiz"}
+            <Icon.ArrowRight size={16}/>
           </button>
+
+          {/* Next quiz refresh indicator */}
+          <div style={{
+            marginTop: 12, fontSize: 10, opacity: 0.65,
+            fontFamily: "'DM Mono', monospace", letterSpacing: 0.5,
+            display: "flex", alignItems: "center", gap: 6,
+          }}>
+            <span style={{
+              width: 5, height: 5, borderRadius: "50%", background: "#22D3EE",
+              boxShadow: "0 0 8px rgba(34,211,238,0.8)",
+              animation: "qhDotPulse 1.8s ease-in-out infinite",
+            }}/>
+            REFRESHES IN 9H 23M · 09:00 TOMORROW
+          </div>
         </div>
 
-        {/* Stats row */}
-        <div className="anim-up" style={{ display: "flex", gap: 8, marginTop: 14, animationDelay: "80ms" }}>
+        {/* Stats row — minimal numerals with bottom dividers */}
+        <div className="anim-up" style={{
+          display: "flex", marginTop: 14, animationDelay: "80ms",
+          background: "var(--card)", borderRadius: 16,
+          border: "1px solid var(--border-faint)",
+          overflow: "hidden",
+        }}>
           {[
-            { val: "6",   label: "week streak" },
-            { val: "86%", label: "avg accuracy" },
-            { val: "28",  label: "checks done" },
+            { val: "6",   sub: "weeks",   label: "STREAK"    },
+            { val: "86%", sub: "correct", label: "ACCURACY"  },
+            { val: "28",  sub: "checks",  label: "COMPLETED" },
           ].map((s, i) => (
-            <div key={i} className="card" style={{ flex: 1, padding: "12px 10px", textAlign: "center" }}>
+            <div key={i} style={{
+              flex: 1, padding: "14px 8px", textAlign: "center",
+              borderRight: i < 2 ? "1px solid var(--border-faint)" : "none",
+            }}>
               <div style={{
-                fontSize: 22, fontWeight: 800, color: "#7c3aed",
-                lineHeight: 1, letterSpacing: -0.5,
+                fontSize: 9, fontWeight: 800, letterSpacing: 1.5,
+                color: "var(--text-2)", fontFamily: "'DM Mono', monospace",
+                marginBottom: 4,
+              }}>{s.label}</div>
+              <div style={{
+                fontSize: 26, fontWeight: 800, color: "#7c3aed",
+                lineHeight: 1, letterSpacing: -1,
               }}>{s.val}</div>
               <div style={{
                 fontSize: 10, color: "var(--text-2)", marginTop: 4,
-                fontFamily: "'DM Mono', monospace",
-              }}>{s.label}</div>
+                fontFamily: "'DM Mono', monospace", opacity: 0.7,
+              }}>{s.sub}</div>
             </div>
           ))}
         </div>
 
-        {/* Recent accuracy by topic */}
-        <div className="anim-up" style={{ marginTop: 14, animationDelay: "160ms" }}>
-          <div className="eyebrow" style={{ marginBottom: 10 }}>RECENT ACCURACY BY TOPIC</div>
-          <div className="card" style={{ padding: "8px 14px" }}>
-            {TOPIC_ACCURACY.slice(0, 3).map((t, i) => (
-              <div key={t.id} style={{
-                display: "flex", alignItems: "center", gap: 10, padding: "8px 0",
-                borderBottom: i < 2 ? "1px solid var(--border-faint)" : "none",
-              }}>
-                <span style={{ fontSize: 18, width: 22, textAlign: "center" }}>{t.emoji}</span>
-                <span style={{ fontSize: 13, fontWeight: 600, flex: 1 }}>{t.name}</span>
-                <div style={{
-                  width: 60, height: 6, borderRadius: 3, background: "var(--card-2)",
-                  overflow: "hidden", border: "1px solid var(--border-faint)",
-                }}>
+        {/* Topic accuracy — colored disc + name + soft progress fill behind row */}
+        <div className="anim-up" style={{ marginTop: 16, animationDelay: "160ms" }}>
+          <div style={{
+            display: "flex", justifyContent: "space-between", alignItems: "baseline",
+            marginBottom: 10,
+          }}>
+            <div className="eyebrow">TOPIC ACCURACY</div>
+            <div style={{
+              fontSize: 10, color: "var(--text-2)",
+              fontFamily: "'DM Mono', monospace", opacity: 0.6,
+            }}>4-WEEK ROLLING</div>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {TOPIC_ACCURACY.slice(0, 3).map((t, i) => {
+              const c = pctColor(t.pct);
+              return (
+                <div key={t.id} className="qh-topic-row" style={{
+                  position: "relative", overflow: "hidden",
+                  background: "var(--card)", border: "1px solid var(--border-faint)",
+                  borderRadius: 14, padding: "12px 14px",
+                  display: "flex", alignItems: "center", gap: 12,
+                  cursor: "pointer",
+                  animationDelay: `${200 + i * 60}ms`,
+                }}
+                  onClick={() => onNav("learn-detail", { topic: t.id })}>
+                  {/* Soft progress fill background */}
                   <div style={{
-                    width: `${t.pct}%`, height: "100%",
-                    background: pctColor(t.pct), borderRadius: 3,
+                    position: "absolute", inset: 0, left: 0,
+                    width: `${t.pct}%`,
+                    background: `linear-gradient(90deg, ${c} 0%, transparent 100%)`,
+                    opacity: 0.08, pointerEvents: "none",
                   }}/>
+                  {/* Disc with percentage */}
+                  <div style={{
+                    width: 44, height: 44, borderRadius: "50%",
+                    background: `${c}`,
+                    color: "#fff", flexShrink: 0,
+                    display: "grid", placeItems: "center",
+                    fontWeight: 800, fontSize: 13, letterSpacing: -0.3,
+                    fontFamily: "'DM Mono', monospace",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
+                    position: "relative", zIndex: 1,
+                  }}>
+                    {t.pct}
+                  </div>
+                  <div style={{ flex: 1, position: "relative", zIndex: 1, minWidth: 0 }}>
+                    <div style={{
+                      display: "flex", alignItems: "center", gap: 6,
+                      fontSize: 14, fontWeight: 700, letterSpacing: -0.1,
+                    }}>
+                      <span style={{ fontSize: 16 }}>{t.emoji}</span>
+                      {t.name}
+                    </div>
+                    <div style={{
+                      fontSize: 10, color: "var(--text-2)", marginTop: 3,
+                      fontFamily: "'DM Mono', monospace",
+                    }}>
+                      {t.attempts - t.missed}/{t.attempts} CORRECT · {t.missed} TO REVIEW
+                    </div>
+                  </div>
+                  <Icon.ChevronRight size={16} stroke="var(--text-2)" style={{ position: "relative", zIndex: 1 }}/>
                 </div>
-                <span style={{
-                  fontSize: 12, fontWeight: 700, fontFamily: "'DM Mono', monospace",
-                  color: pctColor(t.pct), minWidth: 36, textAlign: "right",
-                }}>{t.pct}%</span>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
         {/* View full history — entry point for Goal 5B */}
-        <button onClick={() => onNav("quiz-history")} className="anim-up" style={{
-          marginTop: 14, width: "100%",
+        <button onClick={() => onNav("quiz-history")} className="anim-up qh-history-btn" style={{
+          marginTop: 16, width: "100%",
           display: "flex", alignItems: "center", justifyContent: "space-between",
           padding: "14px 16px", borderRadius: 14,
           background: "linear-gradient(135deg, #1e1b4b, #3730a3)", color: "#fff",
           border: "none", cursor: "pointer", fontWeight: 700, fontSize: 14,
           boxShadow: "0 6px 14px rgba(55,48,163,0.32)",
-          animationDelay: "240ms",
+          animationDelay: "380ms",
+          position: "relative", overflow: "hidden",
         }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 10, position: "relative" }}>
             <span style={{
               width: 32, height: 32, borderRadius: 10,
               background: "rgba(255,255,255,0.18)",
               display: "grid", placeItems: "center", fontSize: 16,
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.2)",
             }}>📊</span>
-            View Knowledge Check History
+            <span style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", lineHeight: 1.2 }}>
+              <span>Knowledge Check History</span>
+              <span style={{
+                fontSize: 10, opacity: 0.7, fontWeight: 500,
+                fontFamily: "'DM Mono', monospace", marginTop: 2,
+              }}>
+                4-WEEK PERFORMANCE
+              </span>
+            </span>
           </span>
           <Icon.ArrowRight size={18}/>
         </button>
