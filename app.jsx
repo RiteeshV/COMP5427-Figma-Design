@@ -95,6 +95,15 @@ function App() {
     setRoute({ name, params });
   };
 
+  // Dev capture hook — lets screenshot tooling drive the app deterministically
+  useEffectApp(() => {
+    window.__nav = navigate;
+    window.__setAppState = setAppState;
+    window.__setLearnState = setLearnState;
+    window.__setQuizScore = setQuizScore;
+    window.__route = route;
+  });
+
   // Decide active dock item
   const dockKey = DOCK_KEY_BY_ROUTE[route.name] || null;
   const showDock = ROUTES_WITH_DOCK.includes(route.name) && !["camera", "coach"].includes(route.name);
