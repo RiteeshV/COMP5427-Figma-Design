@@ -6,7 +6,7 @@ const { useState, useEffect, useRef, useMemo, useCallback } = React;
 function StatusBar() {
   return (
     <div className="status-bar">
-      <span className="sb-time">5:55</span>
+      <span className="sb-time">20:00</span>
       <div className="sb-right">
         <svg className="sb-icon sb-cell" viewBox="0 0 18 12" width="18" height="11" fill="currentColor">
           <rect x="0"  y="8" width="3" height="4" rx="0.7"/>
