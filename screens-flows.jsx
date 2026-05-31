@@ -24,12 +24,11 @@ function ProgressScreen({ state, setState, onNav }) {
 
   // Synthesize per-day serve counts so the weekly bars are meaningful.
   // The last entry is "today" and reads from live state.
-  const dailyServes = [5, 5, 3, 5, 2, 5]; // Mon..Sat mock
   const dayData = weekDays.map((d, i) => {
     const isToday = i === weekDays.length - 1;
     return {
       ...d,
-      serves: isToday ? count : (dailyServes[i] ?? (d.hit ? 5 : 2)),
+      serves: isToday ? count : d.serves,
       isToday,
     };
   });
@@ -105,7 +104,7 @@ function ProgressScreen({ state, setState, onNav }) {
                   <div key={i}
                     onClick={() => {
                       const fullDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-                      onNav("edit-log", { date: d.isToday ? undefined : (i === dayData.length - 2 ? "Yesterday" : fullDays[i]), serves: d.serves, isToday: d.isToday });
+                      onNav("edit-log", { date: d.isToday ? undefined : (i === dayData.length - 2 ? "Yesterday" : fullDays[i]), serves: d.serves, isToday: d.isToday, dayIndex: i });
                     }}
                     className={d.isToday ? "today-bar-pulse" : ""}
                     style={{

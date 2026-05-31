@@ -349,7 +349,17 @@ function EditLogScreen({ state, setState, onNav, showToast, params = {} }) {
   const correctedSame = newCount === initialCount;
 
   const save = () => {
-    if (!params.date) {
+    if (params.dayIndex !== undefined && !params.isToday && params.date) {
+      setState(s => {
+        const newWeekDays = [...s.weekDays];
+        newWeekDays[params.dayIndex] = {
+          ...newWeekDays[params.dayIndex],
+          serves: newCount,
+          hit: newCount >= target
+        };
+        return { ...s, weekDays: newWeekDays };
+      });
+    } else {
       setState(s => ({ ...s, count: newCount }));
     }
     setConfirmed(true);
